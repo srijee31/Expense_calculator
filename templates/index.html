@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Expense Tracker</title>
+  <style>
+    :root {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --primary-yellow: #f1c40f;
+      --primary-hover: #d4ac0d;
+      --text-color: #f5f5f5;
+      --text-muted: #aaa;
+      --border-color: #333;
+      --tick-green: #2ecc71;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .screen {
+      width: 100%;
+      max-width: 900px;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Onboarding Screen */
+    .intro-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 450px;
+      margin: auto;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+
+    .intro-card h1 {
+      color: var(--primary-yellow);
+      margin-bottom: 25px;
+    }
+
+    /* Main Dashboard Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    h1, h2, h3 { color: var(--primary-yellow); margin: 0 0 10px 0; }
+
+    .btn {
+      background-color: var(--primary-yellow);
+      color: #121212;
+      font-weight: bold;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn:hover { background-color: var(--primary-hover); }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-tab {
+      background: #2a2a2a;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+
+    .btn-tab.active {
+      background: var(--primary-yellow);
+      color: #121212;
+      font-weight: bold;
+      border-color: var(--primary-yellow);
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    /* Expanded Calendar Grid */
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 12px;
+      text-align: center;
+    }
+
+    .day-label {
+      color: var(--primary-yellow);
+      font-weight: bold;
+      padding-bottom: 10px;
+      font-size: 1.1em;
+    }
+
+    .date-cell {
+      min-height: 80px;
+      padding: 10px;
+      background-color: #2a2a2a;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      font-size: 1.1em;
+      font-weight: bold;
+      position: relative;
+      transition: all 0.2s;
+    }
+
+    .date-cell:hover {
+      border-color: var(--primary-yellow);
+      background-color: #333;
+      transform: translateY(-2px);
+    }
+
+    .date-cell.empty { background: transparent; cursor: default; border: none; }
+    .date-cell.empty:hover { transform: none; }
+
+    .date-cell.today {
+      border: 2px solid var(--primary-yellow);
+      background-color: #2e2a14;
+    }
+
+    /* Green Tick Marker */
+    .tick-mark {
+      color: var(--tick-green);
+      font-size: 1.2em;
+      align-self: flex-end;
+      line-height: 1;
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 480px;
+      border: 1px solid var(--primary-yellow);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .field { margin-bottom: 14px; text-align: left; }
+    label { display: block; font-size: 0.9em; margin-bottom: 6px; color: var(--text-muted); }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      background: #2a2a2a;
+      border: 1px solid var(--border-color);
+      color: #fff;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 1em;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary-yellow);
+    }
+
+    .actions { display: flex; gap: 12px; margin-top: 20px; }
+
+    /* Summary Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #2a2a2a;
+      padding: 15px;
+      border-radius: 10px;
+      border-left: 4px solid var(--primary-yellow);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .stat-card:hover { background: #333; }
+    .stat-card span { font-size: 0.85em; color: var(--text-muted); }
+    .stat-card h3 { color: #fff; margin-top: 5px; font-size: 1.3em; }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .category-box {
+      background: #2a2a2a;
+      padding: 12px 16px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen 1: Intro / Onboarding Screen -->
+  <div id="intro-screen" class="screen">
+    <div class="intro-card">
+      <h1>Welcome</h1>
+      <div class="field">
+        <label for="user-name">Your Name:</label>
+        <input type="text" id="user-name" placeholder="Enter your name">
+      </div>
+      <div class="field">
+        <label for="user-dob">Date of Birth:</label>
+        <input type="date" id="user-dob">
+      </div>
+      <button class="btn" style="width: 100%; margin-top: 15px;" onclick="saveUserInfo()">Continue to Tracker</button>
+    </div>
+  </div>
+
+  <!-- Screen 2: Main Calendar Screen -->
+  <div id="main-screen" class="screen hidden">
+    <div class="header">
+      <h1 id="user-title">Expense Reports</h1>
+      <button class="btn" onclick="openSummary()">View Summary</button>
+    </div>
+
+    <div class="card">
+      <div class="calendar-header">
+        <button class="btn" onclick="changeMonth(-1)">&lt;</button>
+        <h2 id="month-year-title"></h2>
+        <button class="btn" onclick="changeMonth(1)">&gt;</button>
+      </div>
+      <div class="calendar-grid" id="calendar-grid"></div>
+    </div>
+  </div>
+
+  <!-- Modal: Entry Form -->
+  <div id="entry-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2>Log Expense (<span id="modal-date-display"></span>)</h2>
+      
+      <div class="field"><label>Travel (₹):</label><input type="number" id="amt-Travel" placeholder="0"></div>
+      <div class="field"><label>Food (₹):</label><input type="number" id="amt-Food" placeholder="0"></div>
+      <div class="field"><label>Groceries (₹):</label><input type="number" id="amt-Groceries" placeholder="0"></div>
+      <div class="field"><label>Investment (₹):</label><input type="number" id="amt-Investment" placeholder="0"></div>
+      <div class="field"><label>Shopping (₹):</label><input type="number" id="amt-Shopping" placeholder="0"></div>
+      <div class="field"><label>Bills (₹):</label><input type="number" id="amt-Bills" placeholder="0"></div>
+      <div class="field"><label>Entertainment (₹):</label><input type="number" id="amt-Entertainment" placeholder="0"></div>
+
+      <div class="actions">
+        <button class="btn" style="flex:1;" onclick="submitExpense()">Save Entries</button>
+        <button class="btn" style="background:#555; color:#fff;" onclick="closeModal('entry-modal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Summary Screen -->
+  <div id="summary-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 550px;">
+      <h2>Complete Expense Summary</h2>
+      
+      <div class="stats-grid">
+        <div class="stat-card" onclick="setSummaryPeriod('daily')">
+          <span>Today</span>
+          <h3 id="stat-daily">₹0.00</h3>
+        </div>
+        <div class="stat-card" onclick="setSummaryPeriod('weekly')">
+          <span>This Week</span>
+          <h3 id="stat-weekly">₹0.00</h3>
+        </div>
+        <div class="stat-card" onclick="setSummaryPeriod('monthly')">
+          <span>This Month</span>
+          <h3 id="stat-monthly">₹0.00</h3>
+        </div>
+        <div class="stat-card" onclick="setSummaryPeriod('yearly')">
+          <span>This Year</span>
+          <h3 id="stat-yearly">₹0.00</h3>
+        </div>
+      </div>
+
+      <div class="filter-tabs">
+        <button id="tab-daily" class="btn-tab" onclick="setSummaryPeriod('daily')">Today</button>
+        <button id="tab-weekly" class="btn-tab" onclick="setSummaryPeriod('weekly')">Week</button>
+        <button id="tab-monthly" class="btn-tab active" onclick="setSummaryPeriod('monthly')">Month</button>
+        <button id="tab-yearly" class="btn-tab" onclick="setSummaryPeriod('yearly')">Year</button>
+      </div>
+
+      <h3>Category Breakdown</h3>
+      <div id="category-list"></div>
+
+      <div class="actions" style="margin-top: 20px;">
+        <button class="btn" style="width: 100%;" onclick="closeModal('summary-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentDate = new Date();
+    let selectedDateStr = "";
+    let summaryData = null;
+    let activePeriod = 'monthly';
+    let loggedDates = new Set();
+
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const categoryKeys = ['Travel', 'Food', 'Groceries', 'Investment', 'Shopping', 'Bills', 'Entertainment'];
+
+    // Check localStorage on initial page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedName = localStorage.getItem('expense_user_name');
+      if (savedName) {
+        showMainScreen(savedName);
+      }
+    });
+
+    function saveUserInfo() {
+      const name = document.getElementById('user-name').value.trim();
+      const dob = document.getElementById('user-dob').value;
+
+      if (!name) {
+        alert("Please enter your name.");
+        return;
+      }
+
+      localStorage.setItem('expense_user_name', name);
+      if (dob) localStorage.setItem('expense_user_dob', dob);
+
+      showMainScreen(name);
+    }
+
+    function showMainScreen(userName) {
+      document.getElementById('user-title').innerText = `${userName}'s Expense Reports`;
+      document.getElementById('intro-screen').classList.add('hidden');
+      document.getElementById('main-screen').classList.remove('hidden');
+      fetchLoggedDatesAndRender();
+    }
+
+    async function fetchLoggedDatesAndRender() {
+      try {
+        const response = await fetch('/api/get-logged-dates');
+        const data = await response.json();
+        loggedDates = new Set(data.logged_dates);
+      } catch (err) {
+        console.error("Failed to load logged dates", err);
+      }
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      document.getElementById('month-year-title').innerText = `${months[month]} ${year}`;
+      
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+
+      days.forEach(d => {
+        grid.innerHTML += `<div class="day-label">${d}</div>`;
+      });
+
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      const today = new Date();
+
+      for (let i = 0; i < firstDayIndex; i++) {
+        grid.innerHTML += `<div class="date-cell empty"></div>`;
+      }
+
+      for (let day = 1; day <= totalDays; day++) {
+        const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+        const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        
+        const cell = document.createElement('div');
+        cell.className = `date-cell ${isToday ? 'today' : ''}`;
+        
+        let cellHTML = `<span>${day}</span>`;
+        if (loggedDates.has(formattedDate)) {
+          cellHTML += `<span class="tick-mark">✓</span>`;
+        }
+
+        cell.innerHTML = cellHTML;
+        cell.onclick = () => openEntry(formattedDate);
+        
+        grid.appendChild(cell);
+      }
+    }
+
+    function changeMonth(offset) {
+      currentDate.setMonth(currentDate.getMonth() + offset);
+      renderCalendar();
+    }
+
+    function openEntry(dateStr) {
+      selectedDateStr = dateStr;
+      document.getElementById('modal-date-display').innerText = dateStr;
+      
+      categoryKeys.forEach(cat => {
+        document.getElementById(`amt-${cat}`).value = '';
+      });
+
+      document.getElementById('entry-modal').classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    async function submitExpense() {
+      const items = {};
+      categoryKeys.forEach(cat => {
+        const val = document.getElementById(`amt-${cat}`).value;
+        if (val) items[cat] = val;
+      });
+
+      await fetch('/api/add-expense', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: selectedDateStr, items: items })
+      });
+
+      closeModal('entry-modal');
+      await fetchLoggedDatesAndRender();
+    }
+
+    async function openSummary() {
+      const response = await fetch('/api/get-summary');
+      summaryData = await response.json();
+
+      document.getElementById('stat-daily').innerText = `₹${summaryData.totals.daily.toFixed(2)}`;
+      document.getElementById('stat-weekly').innerText = `₹${summaryData.totals.weekly.toFixed(2)}`;
+      document.getElementById('stat-monthly').innerText = `₹${summaryData.totals.monthly.toFixed(2)}`;
+      document.getElementById('stat-yearly').innerText = `₹${summaryData.totals.yearly.toFixed(2)}`;
+
+      setSummaryPeriod(activePeriod);
+      document.getElementById('summary-modal').classList.remove('hidden');
+    }
+
+    function setSummaryPeriod(period) {
+      activePeriod = period;
+
+      ['daily', 'weekly', 'monthly', 'yearly'].forEach(p => {
+        const tab = document.getElementById(`tab-${p}`);
+        if (tab) {
+          if (p === period) tab.classList.add('active');
+          else tab.classList.remove('active');
+        }
+      });
+
+      const catBox = document.getElementById('category-list');
+      catBox.innerHTML = '';
+
+      if (summaryData && summaryData.by_period[period]) {
+        const periodCategories = summaryData.by_period[period];
+        for (const [cat, amt] of Object.entries(periodCategories)) {
+          catBox.innerHTML += `
+            <div class="category-box">
+              <span>${cat}</span>
+              <strong>₹${amt.toFixed(2)}</strong>
+            </div>`;
+        }
+      }
+    }
+  </script>
+</body>
+</html>
