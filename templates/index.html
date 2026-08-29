@@ -5,283 +5,320 @@
   <title>Expense Tracker</title>
   <style>
     :root {
-      --bg-color: #121212;
-      --card-bg: #1e1e1e;
-      --primary-yellow: #f1c40f;
-      --primary-hover: #d4ac0d;
-      --text-color: #f5f5f5;
-      --text-muted: #aaa;
-      --border-color: #333;
-      --tick-green: #2ecc71;
+      --bg-color: #0f111a;
+      --card-bg: #1a1d28;
+      --card-inner: #24283b;
+      --primary-gold: #f39c12;
+      --primary-hover: #d35400;
+      --text-main: #f0f2f5;
+      --text-muted: #9aa5b1;
+      --border-color: #2f354a;
+      --accent-green: #2ecc71;
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg-color);
-      color: var(--text-color);
+      color: var(--text-main);
       margin: 0;
       padding: 0;
       min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
+      box-sizing: border-box;
     }
 
-    .screen {
+    .main-wrapper {
       width: 100%;
-      max-width: 900px;
-      padding: 20px;
+      max-width: 780px;
+      padding: 12px 16px;
       box-sizing: border-box;
-      transition: opacity 0.3s ease, transform 0.3s ease;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .hidden { display: none !important; }
 
-    /* Onboarding Screen */
-    .intro-card {
-      background-color: var(--card-bg);
+    /* Buttons */
+    .btn {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      color: #0f111a;
+      font-weight: 700;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.88em;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(243, 156, 18, 0.2);
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #e67e22, #d35400);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.35);
+    }
+
+    .btn-tab {
+      background: var(--card-inner);
+      color: var(--text-muted);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 40px;
-      max-width: 450px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8em;
+      font-weight: 600;
+    }
+
+    .btn-tab.active {
+      background: var(--primary-gold);
+      color: #0f111a;
+      border-color: var(--primary-gold);
+    }
+
+    /* Onboarding Card */
+    .intro-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 380px;
       margin: auto;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
       text-align: center;
     }
 
     .intro-card h1 {
-      color: var(--primary-yellow);
-      margin-bottom: 25px;
+      color: var(--primary-gold);
+      margin-bottom: 16px;
+      font-size: 1.5em;
     }
 
-    /* Main Dashboard Header */
+    /* Compact Dashboard Header */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
-    h1, h2, h3 { color: var(--primary-yellow); margin: 0 0 10px 0; }
-
-    .btn {
-      background-color: var(--primary-yellow);
-      color: #121212;
-      font-weight: bold;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .btn:hover { background-color: var(--primary-hover); }
-    .btn:active { transform: scale(0.98); }
-
-    .btn-tab {
-      background: #2a2a2a;
-      color: var(--text-muted);
-      border: 1px solid var(--border-color);
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9em;
-    }
-
-    .btn-tab.active {
-      background: var(--primary-yellow);
-      color: #121212;
-      font-weight: bold;
-      border-color: var(--primary-yellow);
-    }
+    h1, h2, h3 { color: var(--primary-gold); margin: 0; }
+    h1 { font-size: 1.4em; }
+    h2 { font-size: 1.15em; }
 
     .card {
-      background-color: var(--card-bg);
+      background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 25px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      border-radius: 12px;
+      padding: 14px 18px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     }
 
-    /* Expanded Calendar Grid */
+    /* Compact Calendar Grid */
     .calendar-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 12px;
+      gap: 6px;
       text-align: center;
     }
 
     .day-label {
-      color: var(--primary-yellow);
-      font-weight: bold;
-      padding-bottom: 10px;
-      font-size: 1.1em;
+      color: var(--primary-gold);
+      font-weight: 700;
+      padding-bottom: 4px;
+      font-size: 0.85em;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .date-cell {
-      min-height: 80px;
-      padding: 10px;
-      background-color: #2a2a2a;
-      border-radius: 10px;
+      height: 48px;
+      padding: 6px;
+      background-color: var(--card-inner);
+      border-radius: 8px;
       cursor: pointer;
       border: 1px solid transparent;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: flex-start;
-      font-size: 1.1em;
-      font-weight: bold;
-      position: relative;
-      transition: all 0.2s;
+      font-size: 0.9em;
+      font-weight: 600;
+      box-sizing: border-box;
+      transition: all 0.15s ease;
     }
 
     .date-cell:hover {
-      border-color: var(--primary-yellow);
-      background-color: #333;
-      transform: translateY(-2px);
+      border-color: var(--primary-gold);
+      background-color: #2d3248;
     }
 
     .date-cell.empty { background: transparent; cursor: default; border: none; }
-    .date-cell.empty:hover { transform: none; }
+    .date-cell.empty:hover { border: none; }
 
     .date-cell.today {
-      border: 2px solid var(--primary-yellow);
-      background-color: #2e2a14;
+      border: 1.5px solid var(--primary-gold);
+      background-color: #2b2613;
     }
 
-    /* Green Tick Marker */
     .tick-mark {
-      color: var(--tick-green);
-      font-size: 1.2em;
+      color: var(--accent-green);
+      font-size: 1em;
       align-self: flex-end;
       line-height: 1;
     }
 
-    /* Modal Overlay */
+    /* Modal Overlay & Forms */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
+      background: rgba(10, 11, 16, 0.85);
+      backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 1000;
-      padding: 20px;
+      padding: 12px;
       box-sizing: border-box;
     }
 
     .modal-content {
       background: var(--card-bg);
-      padding: 30px;
-      border-radius: 16px;
+      padding: 20px;
+      border-radius: 12px;
       width: 100%;
-      max-width: 480px;
-      border: 1px solid var(--primary-yellow);
-      max-height: 90vh;
+      max-width: 420px;
+      border: 1px solid var(--primary-gold);
+      max-height: 85vh;
       overflow-y: auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
     }
 
-    .field { margin-bottom: 14px; text-align: left; }
-    label { display: block; font-size: 0.9em; margin-bottom: 6px; color: var(--text-muted); }
+    .field { margin-bottom: 8px; text-align: left; }
+    label { display: block; font-size: 0.8em; margin-bottom: 3px; color: var(--text-muted); font-weight: 600; }
 
     input {
       width: 100%;
-      padding: 12px;
-      background: #2a2a2a;
+      padding: 8px 10px;
+      background: var(--card-inner);
       border: 1px solid var(--border-color);
       color: #fff;
-      border-radius: 8px;
+      border-radius: 6px;
       box-sizing: border-box;
-      font-size: 1em;
+      font-size: 0.9em;
     }
 
     input:focus {
       outline: none;
-      border-color: var(--primary-yellow);
+      border-color: var(--primary-gold);
     }
 
-    .actions { display: flex; gap: 12px; margin-top: 20px; }
+    .actions { display: flex; gap: 8px; margin-top: 14px; }
 
     /* Summary Stats Grid */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
     .stat-card {
-      background: #2a2a2a;
-      padding: 15px;
-      border-radius: 10px;
-      border-left: 4px solid var(--primary-yellow);
+      background: var(--card-inner);
+      padding: 10px;
+      border-radius: 8px;
+      border-left: 3px solid var(--primary-gold);
       cursor: pointer;
-      transition: background 0.2s;
     }
 
-    .stat-card:hover { background: #333; }
-    .stat-card span { font-size: 0.85em; color: var(--text-muted); }
-    .stat-card h3 { color: #fff; margin-top: 5px; font-size: 1.3em; }
+    .stat-card span { font-size: 0.75em; color: var(--text-muted); font-weight: 600; }
+    .stat-card h3 { color: #fff; margin-top: 2px; font-size: 1.1em; }
 
-    .filter-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 15px;
-    }
+    .filter-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
 
     .category-box {
-      background: #2a2a2a;
-      padding: 12px 16px;
-      border-radius: 8px;
+      background: var(--card-inner);
+      padding: 8px 12px;
+      border-radius: 6px;
       display: flex;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      font-size: 0.88em;
+    }
+
+    /* Footer Styling */
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 12px 16px;
+      background: #090a10;
+      border-top: 1px solid var(--border-color);
+      box-sizing: border-box;
+      margin-top: 10px;
+    }
+
+    .quote-text {
+      color: var(--primary-gold);
+      font-size: 0.82em;
+      font-style: italic;
+      margin-bottom: 4px;
+    }
+
+    .copyright-text {
+      color: var(--text-muted);
+      font-size: 0.75em;
     }
   </style>
 </head>
 <body>
 
-  <!-- Screen 1: Intro / Onboarding Screen -->
-  <div id="intro-screen" class="screen">
-    <div class="intro-card">
-      <h1>Welcome</h1>
-      <div class="field">
-        <label for="user-name">Your Name:</label>
-        <input type="text" id="user-name" placeholder="Enter your name">
+  <div class="main-wrapper">
+    <!-- Screen 1: Intro Screen -->
+    <div id="intro-screen">
+      <div class="intro-card">
+        <h1>Welcome</h1>
+        <div class="field">
+          <label for="user-name">Your Name:</label>
+          <input type="text" id="user-name" placeholder="Enter your name">
+        </div>
+        <div class="field">
+          <label for="user-dob">Date of Birth:</label>
+          <input type="date" id="user-dob">
+        </div>
+        <button class="btn" style="width: 100%; margin-top: 12px;" onclick="saveUserInfo()">Continue to Tracker</button>
       </div>
-      <div class="field">
-        <label for="user-dob">Date of Birth:</label>
-        <input type="date" id="user-dob">
+    </div>
+
+    <!-- Screen 2: Main Screen -->
+    <div id="main-screen" class="hidden">
+      <div class="header">
+        <h1 id="user-title">Expense Reports</h1>
+        <button class="btn" onclick="openSummary()">View Summary</button>
       </div>
-      <button class="btn" style="width: 100%; margin-top: 15px;" onclick="saveUserInfo()">Continue to Tracker</button>
+
+      <div class="card">
+        <div class="calendar-header">
+          <button class="btn" onclick="changeMonth(-1)">&lt;</button>
+          <h2 id="month-year-title"></h2>
+          <button class="btn" onclick="changeMonth(1)">&gt;</button>
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+      </div>
     </div>
   </div>
 
-  <!-- Screen 2: Main Calendar Screen -->
-  <div id="main-screen" class="screen hidden">
-    <div class="header">
-      <h1 id="user-title">Expense Reports</h1>
-      <button class="btn" onclick="openSummary()">View Summary</button>
-    </div>
-
-    <div class="card">
-      <div class="calendar-header">
-        <button class="btn" onclick="changeMonth(-1)">&lt;</button>
-        <h2 id="month-year-title"></h2>
-        <button class="btn" onclick="changeMonth(1)">&gt;</button>
-      </div>
-      <div class="calendar-grid" id="calendar-grid"></div>
-    </div>
-  </div>
-
-  <!-- Modal: Entry Form -->
+  <!-- Entry Modal -->
   <div id="entry-modal" class="modal-overlay hidden">
     <div class="modal-content">
       <h2>Log Expense (<span id="modal-date-display"></span>)</h2>
@@ -296,14 +333,14 @@
 
       <div class="actions">
         <button class="btn" style="flex:1;" onclick="submitExpense()">Save Entries</button>
-        <button class="btn" style="background:#555; color:#fff;" onclick="closeModal('entry-modal')">Cancel</button>
+        <button class="btn" style="background:#3a3f55; color:#fff;" onclick="closeModal('entry-modal')">Cancel</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal: Summary Screen -->
+  <!-- Summary Modal -->
   <div id="summary-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="max-width: 550px;">
+    <div class="modal-content">
       <h2>Complete Expense Summary</h2>
       
       <div class="stats-grid">
@@ -335,11 +372,17 @@
       <h3>Category Breakdown</h3>
       <div id="category-list"></div>
 
-      <div class="actions" style="margin-top: 20px;">
+      <div class="actions" style="margin-top: 14px;">
         <button class="btn" style="width: 100%;" onclick="closeModal('summary-modal')">Close</button>
       </div>
     </div>
   </div>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="quote-text" id="motivational-quote">"Beware of little expenses. A small leak will sink a great ship."</div>
+    <div class="copyright-text">&copy; <span id="year-span"></span> Expense Calculator. All Rights Reserved.</div>
+  </footer>
 
   <script>
     let currentDate = new Date();
@@ -352,8 +395,20 @@
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const categoryKeys = ['Travel', 'Food', 'Groceries', 'Investment', 'Shopping', 'Bills', 'Entertainment'];
 
-    // Check localStorage on initial page load
+    const quotes = [
+      '"Beware of little expenses. A small leak will sink a great ship."',
+      '"Do not save what is left after spending, but spend what is left after saving."',
+      '"Track every rupee today to build your financial freedom tomorrow."',
+      '"A budget tells your money where to go instead of wondering where it went."'
+    ];
+
     window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('year-span').innerText = new Date().getFullYear();
+      
+      // Randomize quote
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      document.getElementById('motivational-quote').innerText = randomQuote;
+
       const savedName = localStorage.getItem('expense_user_name');
       if (savedName) {
         showMainScreen(savedName);
