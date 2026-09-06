@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Expense Tracker</title>
   <style>
     :root {
@@ -40,6 +41,7 @@
       flex-direction: column;
       padding: 20px;
       box-sizing: border-box;
+      flex-shrink: 0;
     }
 
     .brand {
@@ -107,6 +109,8 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .greeting h1 {
@@ -315,15 +319,17 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
-    /* Full Screen Summary Analytics Styling */
     .summary-tabs-header {
       display: flex;
       gap: 12px;
       margin-bottom: 24px;
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 12px;
+      overflow-x: auto;
     }
 
     .summary-tab-btn {
@@ -336,6 +342,7 @@
       font-size: 0.95em;
       font-weight: 600;
       transition: all 0.2s;
+      white-space: nowrap;
     }
 
     .summary-tab-btn.active {
@@ -369,7 +376,7 @@
 
     .summary-list-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 16px;
     }
 
@@ -390,6 +397,8 @@
       align-items: center;
       justify-content: center;
       z-index: 1000;
+      padding: 16px;
+      box-sizing: border-box;
     }
 
     .hidden { display: none !important; }
@@ -436,6 +445,79 @@
 
     .btn:hover { background: var(--primary-hover); }
     .btn:active { transform: scale(0.98); }
+
+    /* MOBILE RESPONSIVE MEDIA QUERIES */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 12px 16px;
+      }
+
+      .brand {
+        margin-bottom: 12px;
+      }
+
+      .nav-list {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 10px;
+        padding-bottom: 4px;
+      }
+
+      .nav-item {
+        white-space: nowrap;
+        font-size: 0.85em;
+        padding: 8px 12px;
+      }
+
+      .main-content {
+        padding: 16px;
+        overflow-y: visible;
+      }
+
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .income-input-group {
+        width: 100%;
+        justify-content: space-between;
+        box-sizing: border-box;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .date-cell {
+        height: 44px;
+        padding: 4px;
+        font-size: 0.78em;
+      }
+
+      .cell-amount {
+        font-size: 0.65em;
+      }
+
+      .fullscreen-overlay {
+        padding: 16px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -536,7 +618,6 @@
       <button class="btn" style="background: #374151; color: #fff; padding: 10px 18px;" onclick="showDashboardView()">⬅️ Back to Dashboard</button>
     </div>
 
-    <!-- Summary Time Period Tabs -->
     <div class="summary-tabs-header">
       <button id="sum-tab-daily" class="summary-tab-btn" onclick="setFullSummaryPeriod('daily')">Day Wise</button>
       <button id="sum-tab-weekly" class="summary-tab-btn" onclick="setFullSummaryPeriod('weekly')">Week Wise</button>
@@ -544,7 +625,6 @@
       <button id="sum-tab-yearly" class="summary-tab-btn" onclick="setFullSummaryPeriod('yearly')">Year Wise</button>
     </div>
 
-    <!-- Total Spending Hero Card -->
     <div class="summary-hero-card">
       <div>
         <h3 id="summary-period-title">Total Monthly Expenses</h3>
@@ -553,7 +633,6 @@
       <div style="font-size: 2.5em;">📊</div>
     </div>
 
-    <!-- Detailed Category Breakdown Grid -->
     <h3 style="color: var(--primary-gold); margin-bottom: 16px;">Category Wise Breakdown</h3>
     <div class="summary-list-grid" id="summary-categories-grid"></div>
   </div>
@@ -564,7 +643,7 @@
       <h2 style="color: var(--primary-gold); margin: 0;">Detailed Daily Expense Analysis</h2>
       <button class="btn" style="background: #374151; color: #fff;" onclick="toggleGraphZoom(false)">📉 Minimize</button>
     </div>
-    <div style="flex: 1; position: relative; width: 100%;" id="fullscreen-chart-container">
+    <div style="flex: 1; position: relative; width: 100%; min-height: 300px;" id="fullscreen-chart-container">
       <svg id="fullscreen-chart-svg" viewBox="0 0 1000 500" style="width: 100%; height: 100%; overflow: visible;"></svg>
     </div>
   </div>
@@ -916,7 +995,6 @@
       }
     }
 
-    /* FULLSCREEN SUMMARY VIEW LOGIC */
     function openFullSummaryView() {
       document.getElementById('nav-dashboard').classList.remove('active');
       document.getElementById('nav-summary').classList.add('active');
@@ -954,25 +1032,21 @@
 
         if (!categoryKeys.includes(cat)) return;
 
-        // Daily
         if (item.date === todayStr) {
           periodTotals.daily += amt;
           byPeriodCategories.daily[cat] += amt;
         }
 
-        // Weekly
         if (expDate >= startOfWeek) {
           periodTotals.weekly += amt;
           byPeriodCategories.weekly[cat] += amt;
         }
 
-        // Monthly
         if (expDate.getFullYear() === todayDate.getFullYear() && expDate.getMonth() === todayDate.getMonth()) {
           periodTotals.monthly += amt;
           byPeriodCategories.monthly[cat] += amt;
         }
 
-        // Yearly
         if (expDate.getFullYear() === todayDate.getFullYear()) {
           periodTotals.yearly += amt;
           byPeriodCategories.yearly[cat] += amt;
