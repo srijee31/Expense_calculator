@@ -31,7 +31,99 @@
       overflow: hidden;
     }
 
-    /* Sidebar Layout */
+    .hidden { display: none !important; }
+
+    /* Dedicated Login View Screen */
+    .login-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: var(--bg-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .login-brand-icon {
+      background: var(--primary-gold);
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8em;
+      color: #0d1117;
+      font-weight: bold;
+      margin: 0 auto 16px auto;
+    }
+
+    .login-card h2 {
+      margin: 0 0 8px 0;
+      color: var(--primary-gold);
+      font-size: 1.6em;
+    }
+
+    .login-card p {
+      color: var(--text-muted);
+      font-size: 0.9em;
+      margin-bottom: 28px;
+      line-height: 1.4;
+    }
+
+    .google-btn {
+      width: 100%;
+      background: #ffffff;
+      color: #1f2937;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .google-btn:hover {
+      background: #f3f4f6;
+    }
+
+    .google-btn:active {
+      transform: scale(0.98);
+    }
+
+    .google-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Main Workspace Layout */
+    .app-layout {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
     .sidebar {
       width: 230px;
       background-color: var(--sidebar-bg);
@@ -96,7 +188,6 @@
       font-weight: 600;
     }
 
-    /* Main Workspace */
     .main-content {
       flex: 1;
       overflow-y: auto;
@@ -426,8 +517,6 @@
       box-sizing: border-box;
     }
 
-    .hidden { display: none !important; }
-
     .modal-content {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -478,6 +567,10 @@
         overflow-y: auto;
         height: auto;
         min-height: 100vh;
+      }
+
+      .app-layout {
+        flex-direction: column;
       }
 
       .sidebar {
@@ -547,96 +640,118 @@
 </head>
 <body>
 
-  <!-- Left Sidebar -->
-  <div class="sidebar">
-    <div class="brand">
-      <div class="brand-icon">₹</div>
-      <span>Expense Tracker</span>
+  <!-- Fullscreen Login View -->
+  <div id="login-view" class="login-container">
+    <div class="login-card">
+      <div class="login-brand-icon">₹</div>
+      <h2>Expense Tracker</h2>
+      <p>Log in to access and sync your personal expenses securely across devices.</p>
+      
+      <button class="google-btn" onclick="triggerLogin()">
+        <svg class="google-icon" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        Sign in with Google
+      </button>
     </div>
-
-    <ul class="nav-list">
-      <li class="nav-item active" id="nav-dashboard" onclick="showDashboardView()">📊 Dashboard</li>
-      <li class="nav-item" id="nav-summary" onclick="openFullSummaryView()">📈 View Summary</li>
-      <li class="nav-item" onclick="resetUser()">⚙️ Reset User</li>
-    </ul>
   </div>
 
-  <!-- Main Content Area -->
-  <div class="main-content">
-    <div class="top-bar">
-      <div class="greeting">
-        <h1 id="welcome-heading">Good Morning 👋</h1>
-        <p>Manage and track your daily money flow.</p>
+  <!-- Main Application Layout (Hidden by default until logged in) -->
+  <div id="main-app" class="app-layout hidden">
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">₹</div>
+        <span>Expense Tracker</span>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-        <div class="income-input-group">
-          <label for="monthly-income-input">Monthly Income (₹):</label>
-          <input type="number" id="monthly-income-input" placeholder="0" onchange="updateIncome()">
-        </div>
-
-        <!-- Top Right Profile Card -->
-        <div id="user-profile-badge" class="user-profile-card hidden">
-          <img id="user-avatar" src="" alt="Profile Picture" class="user-avatar-img">
-          <span id="user-display-name" class="user-name-text">User</span>
-        </div>
-      </div>
+      <ul class="nav-list">
+        <li class="nav-item active" id="nav-dashboard" onclick="showDashboardView()">📊 Dashboard</li>
+        <li class="nav-item" id="nav-summary" onclick="openFullSummaryView()">📈 View Summary</li>
+        <li class="nav-item" onclick="resetUser()">⚙️ Reset User</li>
+      </ul>
     </div>
 
-    <!-- Top Stats Cards -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div>
-          <span>Monthly Income</span>
-          <h2 id="disp-income" style="color: var(--accent-green);">₹0.00</h2>
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <div class="top-bar">
+        <div class="greeting">
+          <h1 id="welcome-heading">Good Morning 👋</h1>
+          <p>Manage and track your daily money flow.</p>
         </div>
-        <div style="font-size: 1.3em;">💵</div>
-      </div>
-      <div class="stat-card">
-        <div>
-          <span>Total Expenses</span>
-          <h2 id="total-expenses" style="color: var(--accent-red);">₹0.00</h2>
-        </div>
-        <div style="font-size: 1.3em;">📉</div>
-      </div>
-      <div class="stat-card">
-        <div>
-          <span>Current Balance</span>
-          <h2 id="total-balance">₹0.00</h2>
-        </div>
-        <div style="font-size: 1.3em;">💰</div>
-      </div>
-    </div>
 
-    <!-- Calendar Expense Logger -->
-    <div class="section-card">
-      <div class="section-header">
-        <h3 id="month-year-title">Calendar Expense Logger</h3>
-        <div>
-          <button class="btn" style="padding: 2px 8px;" onclick="changeMonth(-1)">&lt;</button>
-          <button class="btn" style="padding: 2px 8px;" onclick="changeMonth(1)">&gt;</button>
+        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+          <div class="income-input-group">
+            <label for="monthly-income-input">Monthly Income (₹):</label>
+            <input type="number" id="monthly-income-input" placeholder="0" onchange="updateIncome()">
+          </div>
+
+          <!-- Top Right Profile Card -->
+          <div id="user-profile-badge" class="user-profile-card hidden">
+            <img id="user-avatar" src="" alt="Profile Picture" class="user-avatar-img">
+            <span id="user-display-name" class="user-name-text">User</span>
+          </div>
         </div>
       </div>
-      <div class="calendar-grid" id="calendar-grid"></div>
-    </div>
 
-    <!-- Daily Expense Graph & Categories -->
-    <div class="dashboard-grid">
+      <!-- Top Stats Cards -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div>
+            <span>Monthly Income</span>
+            <h2 id="disp-income" style="color: var(--accent-green);">₹0.00</h2>
+          </div>
+          <div style="font-size: 1.3em;">💵</div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <span>Total Expenses</span>
+            <h2 id="total-expenses" style="color: var(--accent-red);">₹0.00</h2>
+          </div>
+          <div style="font-size: 1.3em;">📉</div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <span>Current Balance</span>
+            <h2 id="total-balance">₹0.00</h2>
+          </div>
+          <div style="font-size: 1.3em;">💰</div>
+        </div>
+      </div>
+
+      <!-- Calendar Expense Logger -->
       <div class="section-card">
         <div class="section-header">
-          <h3>Daily Expenses (Current Month)</h3>
-          <button class="btn" style="padding: 4px 10px; font-size: 0.78em;" onclick="toggleGraphZoom(true)">🔍 Zoom Graph</button>
+          <h3 id="month-year-title">Calendar Expense Logger</h3>
+          <div>
+            <button class="btn" style="padding: 2px 8px;" onclick="changeMonth(-1)">&lt;</button>
+            <button class="btn" style="padding: 2px 8px;" onclick="changeMonth(1)">&gt;</button>
+          </div>
         </div>
-        <div class="chart-container" id="daily-chart-container">
-          <svg id="daily-chart-svg" viewBox="0 0 500 180" style="width: 100%; height: 100%; overflow: visible;"></svg>
-        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
       </div>
 
-      <div class="section-card">
-        <div class="section-header">
-          <h3>Top Categories</h3>
+      <!-- Daily Expense Graph & Categories -->
+      <div class="dashboard-grid">
+        <div class="section-card">
+          <div class="section-header">
+            <h3>Daily Expenses (Current Month)</h3>
+            <button class="btn" style="padding: 4px 10px; font-size: 0.78em;" onclick="toggleGraphZoom(true)">🔍 Zoom Graph</button>
+          </div>
+          <div class="chart-container" id="daily-chart-container">
+            <svg id="daily-chart-svg" viewBox="0 0 500 180" style="width: 100%; height: 100%; overflow: visible;"></svg>
+          </div>
         </div>
-        <div id="category-progress-list"></div>
+
+        <div class="section-card">
+          <div class="section-header">
+            <h3>Top Categories</h3>
+          </div>
+          <div id="category-progress-list"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -737,15 +852,27 @@
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
+        document.getElementById('login-view').classList.add('hidden');
+        document.getElementById('main-app').classList.remove('hidden');
+
         updateTimeBasedGreeting(user.displayName || "User");
         renderUserProfile(user);
         await loadUserDataFromFirestore(user.uid);
       } else {
         currentUser = null;
+        document.getElementById('main-app').classList.add('hidden');
+        document.getElementById('login-view').classList.remove('hidden');
         document.getElementById('user-profile-badge').classList.add('hidden');
-        handleGoogleLogin();
       }
     });
+
+    window.triggerLogin = async function() {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (error) {
+        console.error("Authentication Error:", error);
+      }
+    };
 
     function renderUserProfile(user) {
       const profileBadge = document.getElementById('user-profile-badge');
@@ -760,18 +887,6 @@
 
       nameSpan.innerText = user.displayName || user.email || "User";
       profileBadge.classList.remove('hidden');
-    }
-
-    async function handleGoogleLogin() {
-      try {
-        const result = await signInWithPopup(auth, provider);
-        currentUser = result.user;
-        updateTimeBasedGreeting(currentUser.displayName || "User");
-        renderUserProfile(currentUser);
-        await loadUserDataFromFirestore(currentUser.uid);
-      } catch (error) {
-        console.error("Authentication Error:", error);
-      }
     }
 
     async function loadUserDataFromFirestore(uid) {
@@ -1116,7 +1231,6 @@
       document.getElementById('nav-summary').classList.add('active');
       document.getElementById('fullscreen-summary-page').classList.add('active');
       
-      // Reset active period to 'daily' on each open
       activeSummaryPeriod = 'daily';
       
       calculateAndRenderSummary();
