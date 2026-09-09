@@ -1115,7 +1115,10 @@
       document.getElementById('nav-dashboard').classList.remove('active');
       document.getElementById('nav-summary').classList.add('active');
       document.getElementById('fullscreen-summary-page').classList.add('active');
+      
+      // Reset active period to 'daily' on each open
       activeSummaryPeriod = 'daily';
+      
       calculateAndRenderSummary();
     };
 
