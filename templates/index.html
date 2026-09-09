@@ -104,13 +104,8 @@
       transition: background 0.2s, transform 0.1s;
     }
 
-    .google-btn:hover {
-      background: #f3f4f6;
-    }
-
-    .google-btn:active {
-      transform: scale(0.98);
-    }
+    .google-btn:hover { background: #f3f4f6; }
+    .google-btn:active { transform: scale(0.98); }
 
     .google-icon {
       width: 20px;
@@ -216,33 +211,6 @@
       font-size: 0.9em;
     }
 
-    .income-input-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      padding: 6px 12px;
-      border-radius: 8px;
-    }
-
-    .income-input-group label {
-      font-size: 0.85em;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .income-input-group input {
-      width: 100px;
-      padding: 6px 8px;
-      background: var(--card-inner);
-      border: 1px solid var(--border-color);
-      color: #fff;
-      border-radius: 4px;
-      font-size: 0.9em;
-      font-weight: 600;
-    }
-
     /* Top Right Profile Badge */
     .user-profile-card {
       display: flex;
@@ -268,10 +236,10 @@
       color: var(--text-main);
     }
 
-    /* Top Stats Row */
+    /* Top Stats Row (2 Cards) */
     .stats-row {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 16px;
       margin-bottom: 20px;
     }
@@ -295,6 +263,12 @@
     .stat-card h2 {
       margin: 4px 0 0 0;
       font-size: 1.4em;
+    }
+
+    .rupee-icon {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: var(--primary-gold);
     }
 
     .section-card {
@@ -512,7 +486,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      z-index: 2500;
       padding: 16px;
       box-sizing: border-box;
     }
@@ -529,10 +503,10 @@
       overflow-y: auto;
     }
 
-    .field { margin-bottom: 8px; }
-    label { display: block; font-size: 0.8em; color: var(--text-muted); margin-bottom: 2px; font-weight: 600; }
+    .field { margin-bottom: 12px; }
+    label { display: block; font-size: 0.8em; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
 
-    input {
+    input, select {
       width: 100%;
       padding: 8px 10px;
       background: var(--card-inner);
@@ -543,7 +517,7 @@
       font-size: 0.9em;
     }
 
-    input:focus { outline: none; border-color: var(--primary-gold); }
+    input:focus, select:focus { outline: none; border-color: var(--primary-gold); }
 
     .btn {
       background: var(--primary-gold);
@@ -607,12 +581,6 @@
         align-items: flex-start;
       }
 
-      .income-input-group {
-        width: 100%;
-        justify-content: space-between;
-        box-sizing: border-box;
-      }
-
       .stats-row {
         grid-template-columns: 1fr;
         gap: 12px;
@@ -659,7 +627,7 @@
     </div>
   </div>
 
-  <!-- Main Application Layout (Hidden by default until logged in) -->
+  <!-- Main Application Layout -->
   <div id="main-app" class="app-layout hidden">
     <!-- Left Sidebar -->
     <div class="sidebar">
@@ -670,8 +638,9 @@
 
       <ul class="nav-list">
         <li class="nav-item active" id="nav-dashboard" onclick="showDashboardView()">📊 Dashboard</li>
+        <li class="nav-item" id="nav-income" onclick="openIncomeModal()">💵 Monthly Income</li>
         <li class="nav-item" id="nav-summary" onclick="openFullSummaryView()">📈 View Summary</li>
-        <li class="nav-item" onclick="resetUser()">⚙️ Reset User</li>
+        <li class="nav-item" onclick="openLogoutModal()">🚪 Logout</li>
       </ul>
     </div>
 
@@ -684,11 +653,6 @@
         </div>
 
         <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-          <div class="income-input-group">
-            <label for="monthly-income-input">Monthly Income (₹):</label>
-            <input type="number" id="monthly-income-input" placeholder="0" onchange="updateIncome()">
-          </div>
-
           <!-- Top Right Profile Card -->
           <div id="user-profile-badge" class="user-profile-card hidden">
             <img id="user-avatar" src="" alt="Profile Picture" class="user-avatar-img">
@@ -697,28 +661,21 @@
         </div>
       </div>
 
-      <!-- Top Stats Cards -->
+      <!-- Top Stats Cards (Total Expenses & Current Balance Only) -->
       <div class="stats-row">
-        <div class="stat-card">
-          <div>
-            <span>Monthly Income</span>
-            <h2 id="disp-income" style="color: var(--accent-green);">₹0.00</h2>
-          </div>
-          <div style="font-size: 1.3em;">💵</div>
-        </div>
         <div class="stat-card">
           <div>
             <span>Total Expenses</span>
             <h2 id="total-expenses" style="color: var(--accent-red);">₹0.00</h2>
           </div>
-          <div style="font-size: 1.3em;">📉</div>
+          <div class="rupee-icon">📉</div>
         </div>
         <div class="stat-card">
           <div>
             <span>Current Balance</span>
             <h2 id="total-balance">₹0.00</h2>
           </div>
-          <div style="font-size: 1.3em;">💰</div>
+          <div class="rupee-icon">₹</div>
         </div>
       </div>
 
@@ -796,6 +753,56 @@
     </div>
   </div>
 
+  <!-- Monthly Income Modal -->
+  <div id="income-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3 style="margin-top:0; color: var(--primary-gold);">Set Monthly Income (₹)</h3>
+      
+      <div class="field">
+        <label for="income-month-select">Select Month:</label>
+        <select id="income-month-select">
+          <option value="0">January</option>
+          <option value="1">February</option>
+          <option value="2">March</option>
+          <option value="3">April</option>
+          <option value="4">May</option>
+          <option value="5">June</option>
+          <option value="6">July</option>
+          <option value="7">August</option>
+          <option value="8">September</option>
+          <option value="9">October</option>
+          <option value="10">November</option>
+          <option value="11">December</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="income-amount-input">Monthly Income Amount (₹):</label>
+        <input type="number" id="income-amount-input" placeholder="e.g. 50000">
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-top: 16px;">
+        <button class="btn" style="flex:1;" onclick="saveMonthlyIncome()">Save Income</button>
+        <button class="btn" style="background: #4b5563; color: #fff;" onclick="closeModal('income-modal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout Confirmation Modal -->
+  <div id="logout-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="text-align: center;">
+      <h3 style="margin-top:0; color: var(--primary-gold);">Confirm Logout</h3>
+      <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 20px;">
+        Are you sure you want to sign out of your account? You will need to sign in again to access your synced expense data.
+      </p>
+
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <button class="btn" style="background: var(--accent-red); color: #fff; flex: 1;" onclick="confirmLogout()">Yes, Logout</button>
+        <button class="btn" style="background: #4b5563; color: #fff; flex: 1;" onclick="closeModal('logout-modal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Entry Modal -->
   <div id="entry-modal" class="modal-overlay hidden">
     <div class="modal-content">
@@ -837,6 +844,11 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
+
+    // Force explicit account selection prompt on login
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    });
 
     let currentUser = null;
     let currentDate = new Date();
@@ -897,8 +909,7 @@
         if (docSnap.exists()) {
           const data = docSnap.data();
           localStorage.setItem('device_expenses', JSON.stringify(data.expenses || []));
-          localStorage.setItem('monthly_income', data.income || 0);
-          document.getElementById('monthly-income-input').value = data.income || 0;
+          localStorage.setItem('monthly_incomes_map', JSON.stringify(data.incomes_map || {}));
         }
       } catch (err) {
         console.error("Firestore Load Error:", err);
@@ -911,12 +922,12 @@
     async function syncDataToFirestore() {
       if (!currentUser) return;
       const expenses = getLocalExpenses();
-      const income = parseFloat(localStorage.getItem('monthly_income')) || 0;
+      const incomesMap = getIncomesMap();
 
       try {
         await setDoc(doc(db, "users", currentUser.uid), {
           expenses: expenses,
-          income: income,
+          incomes_map: incomesMap,
           lastUpdated: new Date().toISOString()
         });
       } catch (err) {
@@ -945,9 +956,38 @@
       localStorage.setItem('device_expenses', JSON.stringify(data));
     }
 
-    window.updateIncome = function() {
-      const val = parseFloat(document.getElementById('monthly-income-input').value) || 0;
-      localStorage.setItem('monthly_income', val);
+    function getIncomesMap() {
+      return JSON.parse(localStorage.getItem('monthly_incomes_map')) || {};
+    }
+
+    function getCurrentMonthIncome() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const key = `${year}-${String(month + 1).padStart(2, '0')}`;
+      const incomesMap = getIncomesMap();
+      return parseFloat(incomesMap[key]) || 0;
+    }
+
+    window.openIncomeModal = function() {
+      const monthSelect = document.getElementById('income-month-select');
+      monthSelect.value = currentDate.getMonth();
+      
+      const currentVal = getCurrentMonthIncome();
+      document.getElementById('income-amount-input').value = currentVal || '';
+      document.getElementById('income-modal').classList.remove('hidden');
+    };
+
+    window.saveMonthlyIncome = function() {
+      const selectedMonth = parseInt(document.getElementById('income-month-select').value);
+      const val = parseFloat(document.getElementById('income-amount-input').value) || 0;
+      const year = currentDate.getFullYear();
+      const key = `${year}-${String(selectedMonth + 1).padStart(2, '0')}`;
+
+      let incomesMap = getIncomesMap();
+      incomesMap[key] = val;
+      localStorage.setItem('monthly_incomes_map', JSON.stringify(incomesMap));
+
+      closeModal('income-modal');
       updateDashboardStats();
       syncDataToFirestore();
     };
@@ -1043,22 +1083,27 @@
 
     function updateDashboardStats() {
       const allExpenses = getLocalExpenses();
-      const income = parseFloat(localStorage.getItem('monthly_income')) || 0;
+      const currentMonthIncome = getCurrentMonthIncome();
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
       let total = 0;
       let categoryTotals = {};
 
       categoryKeys.forEach(c => categoryTotals[c] = 0);
 
       allExpenses.forEach(e => {
-        total += e.amount;
-        if (categoryTotals[e.category] !== undefined) {
-          categoryTotals[e.category] += e.amount;
+        const expDate = new Date(e.date);
+        if (expDate.getFullYear() === year && expDate.getMonth() === month) {
+          total += e.amount;
+          if (categoryTotals[e.category] !== undefined) {
+            categoryTotals[e.category] += e.amount;
+          }
         }
       });
 
-      const balance = income - total;
+      const balance = currentMonthIncome - total;
 
-      document.getElementById('disp-income').innerText = `₹${income.toLocaleString('en-IN')}`;
       document.getElementById('total-expenses').innerText = `₹${total.toLocaleString('en-IN')}`;
       document.getElementById('total-balance').innerText = `₹${balance.toLocaleString('en-IN')}`;
       document.getElementById('total-balance').style.color = balance < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
@@ -1339,13 +1384,18 @@
       }
     };
 
-    window.resetUser = function() {
-      if (confirm("Sign out and reset user data?")) {
-        signOut(auth).then(() => {
-          localStorage.clear();
-          location.reload();
-        });
-      }
+    window.openLogoutModal = function() {
+      document.getElementById('logout-modal').classList.remove('hidden');
+    };
+
+    window.confirmLogout = function() {
+      signOut(auth).then(() => {
+        localStorage.clear();
+        closeModal('logout-modal');
+        location.reload();
+      }).catch((err) => {
+        console.error("Sign Out Error:", err);
+      });
     };
   </script>
 </body>
