@@ -152,6 +152,31 @@
       font-weight: 600;
     }
 
+    /* Top Right Profile Badge */
+    .user-profile-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    .user-avatar-img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-gold);
+      object-fit: cover;
+    }
+
+    .user-name-text {
+      font-size: 0.88em;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
     /* Top Stats Row */
     .stats-row {
       display: grid;
@@ -544,9 +569,17 @@
         <p>Manage and track your daily money flow.</p>
       </div>
 
-      <div class="income-input-group">
-        <label for="monthly-income-input">Monthly Income (₹):</label>
-        <input type="number" id="monthly-income-input" placeholder="0" onchange="updateIncome()">
+      <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+        <div class="income-input-group">
+          <label for="monthly-income-input">Monthly Income (₹):</label>
+          <input type="number" id="monthly-income-input" placeholder="0" onchange="updateIncome()">
+        </div>
+
+        <!-- Top Right Profile Card -->
+        <div id="user-profile-badge" class="user-profile-card hidden">
+          <img id="user-avatar" src="" alt="Profile Picture" class="user-avatar-img">
+          <span id="user-display-name" class="user-name-text">User</span>
+        </div>
       </div>
     </div>
 
@@ -705,18 +738,36 @@
       if (user) {
         currentUser = user;
         updateTimeBasedGreeting(user.displayName || "User");
+        renderUserProfile(user);
         await loadUserDataFromFirestore(user.uid);
       } else {
         currentUser = null;
+        document.getElementById('user-profile-badge').classList.add('hidden');
         handleGoogleLogin();
       }
     });
+
+    function renderUserProfile(user) {
+      const profileBadge = document.getElementById('user-profile-badge');
+      const avatarImg = document.getElementById('user-avatar');
+      const nameSpan = document.getElementById('user-display-name');
+
+      if (user.photoURL) {
+        avatarImg.src = user.photoURL;
+      } else {
+        avatarImg.src = "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
+      }
+
+      nameSpan.innerText = user.displayName || user.email || "User";
+      profileBadge.classList.remove('hidden');
+    }
 
     async function handleGoogleLogin() {
       try {
         const result = await signInWithPopup(auth, provider);
         currentUser = result.user;
         updateTimeBasedGreeting(currentUser.displayName || "User");
+        renderUserProfile(currentUser);
         await loadUserDataFromFirestore(currentUser.uid);
       } catch (error) {
         console.error("Authentication Error:", error);
