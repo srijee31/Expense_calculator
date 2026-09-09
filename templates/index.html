@@ -668,7 +668,44 @@
     </div>
   </div>
 
-  <script>
+  <!-- Firebase Integration Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // ⚠️ REPLACE WITH YOUR FIREBASE CONFIG FROM YOUR FIREBASE CONSOLE
+    <!-- Firebase Integration Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Your actual Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC5O_FuiZFL1GwHmGmrAS_nGAdliQ81DuQ",
+      authDomain: "expense-calculator-c8b9d.firebaseapp.com",
+      projectId: "expense-calculator-c8b9d",
+      storageBucket: "expense-calculator-c8b9d.firebasestorage.app",
+      messagingSenderId: "433220001220",
+      appId: "1:433220001220:web:140682deef6a675f72d891",
+      measurementId: "G-NKRZWVSCBE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    // Rest of your authentication and Firestore sync logic continues here...
+    
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    let currentUser = null;
     let currentDate = new Date();
     let selectedDateStr = "";
     let activeSummaryPeriod = 'monthly';
@@ -679,21 +716,62 @@
     const categoryKeys = ['Travel', 'Food', 'Groceries', 'Investment', 'Shopping', 'Bills', 'Entertainment'];
     const categoryColors = { Food: '#f59e0b', Travel: '#3b82f6', Shopping: '#a855f7', Investment: '#10b981', Groceries: '#f97316', Bills: '#ef4444', Entertainment: '#06b6d4' };
 
-    window.addEventListener('DOMContentLoaded', () => {
-      let userName = localStorage.getItem('expense_user_name');
-      if (!userName) {
-        userName = prompt("Enter your name to get started:") || "User";
-        localStorage.setItem('expense_user_name', userName);
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        updateTimeBasedGreeting(user.displayName || "User");
+        await loadUserDataFromFirestore(user.uid);
+      } else {
+        currentUser = null;
+        handleGoogleLogin();
       }
-      
-      updateTimeBasedGreeting(userName);
+    });
 
-      const savedIncome = localStorage.getItem('monthly_income') || 0;
-      document.getElementById('monthly-income-input').value = savedIncome;
+    async function handleGoogleLogin() {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        currentUser = result.user;
+        updateTimeBasedGreeting(currentUser.displayName || "User");
+        await loadUserDataFromFirestore(currentUser.uid);
+      } catch (error) {
+        console.error("Authentication Error:", error);
+      }
+    }
+
+    async function loadUserDataFromFirestore(uid) {
+      try {
+        const userDocRef = doc(db, "users", uid);
+        const docSnap = await getDoc(userDocRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          localStorage.setItem('device_expenses', JSON.stringify(data.expenses || []));
+          localStorage.setItem('monthly_income', data.income || 0);
+          document.getElementById('monthly-income-input').value = data.income || 0;
+        }
+      } catch (err) {
+        console.error("Firestore Load Error:", err);
+      }
 
       renderCalendar();
       updateDashboardStats();
-    });
+    }
+
+    async function syncDataToFirestore() {
+      if (!currentUser) return;
+      const expenses = getLocalExpenses();
+      const income = parseFloat(localStorage.getItem('monthly_income')) || 0;
+
+      try {
+        await setDoc(doc(db, "users", currentUser.uid), {
+          expenses: expenses,
+          income: income,
+          lastUpdated: new Date().toISOString()
+        });
+      } catch (err) {
+        console.error("Firestore Sync Error:", err);
+      }
+    }
 
     function updateTimeBasedGreeting(name) {
       const currentHour = new Date().getHours();
@@ -716,11 +794,12 @@
       localStorage.setItem('device_expenses', JSON.stringify(data));
     }
 
-    function updateIncome() {
+    window.updateIncome = function() {
       const val = parseFloat(document.getElementById('monthly-income-input').value) || 0;
       localStorage.setItem('monthly_income', val);
       updateDashboardStats();
-    }
+      syncDataToFirestore();
+    };
 
     function renderCalendar() {
       const year = currentDate.getFullYear();
@@ -770,11 +849,11 @@
       }
     }
 
-    function changeMonth(offset) {
+    window.changeMonth = function(offset) {
       currentDate.setMonth(currentDate.getMonth() + offset);
       renderCalendar();
       updateDashboardStats();
-    }
+    };
 
     function openEntry(dateStr) {
       selectedDateStr = dateStr;
@@ -790,11 +869,11 @@
       document.getElementById('entry-modal').classList.remove('hidden');
     }
 
-    function closeModal(id) {
+    window.closeModal = function(id) {
       document.getElementById(id).classList.add('hidden');
-    }
+    };
 
-    function submitExpense() {
+    window.submitExpense = function() {
       let allExpenses = getLocalExpenses().filter(e => e.date !== selectedDateStr);
 
       categoryKeys.forEach(cat => {
@@ -805,10 +884,11 @@
       });
 
       saveLocalExpenses(allExpenses);
+      syncDataToFirestore();
       closeModal('entry-modal');
       renderCalendar();
       updateDashboardStats();
-    }
+    };
 
     function updateDashboardStats() {
       const allExpenses = getLocalExpenses();
@@ -985,7 +1065,7 @@
       });
     }
 
-    function toggleGraphZoom(enable) {
+    window.toggleGraphZoom = function(enable) {
       const modal = document.getElementById('fullscreen-graph-modal');
       if (enable) {
         modal.classList.add('active');
@@ -993,20 +1073,20 @@
       } else {
         modal.classList.remove('active');
       }
-    }
+    };
 
-    function openFullSummaryView() {
+    window.openFullSummaryView = function() {
       document.getElementById('nav-dashboard').classList.remove('active');
       document.getElementById('nav-summary').classList.add('active');
       document.getElementById('fullscreen-summary-page').classList.add('active');
       calculateAndRenderSummary();
-    }
+    };
 
-    function showDashboardView() {
+    window.showDashboardView = function() {
       document.getElementById('nav-summary').classList.remove('active');
       document.getElementById('nav-dashboard').classList.add('active');
       document.getElementById('fullscreen-summary-page').classList.remove('active');
-    }
+    };
 
     function calculateAndRenderSummary() {
       const allExpenses = getLocalExpenses();
@@ -1057,7 +1137,7 @@
       setFullSummaryPeriod(activeSummaryPeriod);
     }
 
-    function setFullSummaryPeriod(period) {
+    window.setFullSummaryPeriod = function(period) {
       activeSummaryPeriod = period;
 
       ['daily', 'weekly', 'monthly', 'yearly'].forEach(p => {
@@ -1103,14 +1183,16 @@
           </div>
         `;
       }
-    }
+    };
 
-    function resetUser() {
-      if (confirm("Reset user settings and stored expenses?")) {
-        localStorage.clear();
-        location.reload();
+    window.resetUser = function() {
+      if (confirm("Sign out and reset user data?")) {
+        signOut(auth).then(() => {
+          localStorage.clear();
+          location.reload();
+        });
       }
-    }
+    };
   </script>
 </body>
 </html>
