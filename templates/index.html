@@ -760,7 +760,7 @@
       
       <div class="field">
         <label for="income-month-select">Select Month:</label>
-        <select id="income-month-select">
+        <select id="income-month-select" onchange="handleIncomeMonthChange()">
           <option value="0">January</option>
           <option value="1">February</option>
           <option value="2">March</option>
@@ -968,12 +968,20 @@
       return parseFloat(incomesMap[key]) || 0;
     }
 
+    window.handleIncomeMonthChange = function() {
+      const selectedMonth = parseInt(document.getElementById('income-month-select').value);
+      const year = currentDate.getFullYear();
+      const key = `${year}-${String(selectedMonth + 1).padStart(2, '0')}`;
+      const incomesMap = getIncomesMap();
+      
+      const savedVal = parseFloat(incomesMap[key]);
+      document.getElementById('income-amount-input').value = !isNaN(savedVal) && savedVal > 0 ? savedVal : '';
+    };
+
     window.openIncomeModal = function() {
       const monthSelect = document.getElementById('income-month-select');
       monthSelect.value = currentDate.getMonth();
-      
-      const currentVal = getCurrentMonthIncome();
-      document.getElementById('income-amount-input').value = currentVal || '';
+      handleIncomeMonthChange();
       document.getElementById('income-modal').classList.remove('hidden');
     };
 
