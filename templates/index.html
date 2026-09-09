@@ -6,17 +6,18 @@
   <title>Expense Tracker</title>
   <style>
     :root {
-      --bg-color: #0b0f19;
-      --sidebar-bg: #111827;
-      --card-bg: #1f293d;
-      --card-inner: #111827;
+      --bg-color: #080c14;
+      --sidebar-bg: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-inner: #0f172a;
       --primary-gold: #f59e0b;
       --primary-hover: #d97706;
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
-      --border-color: #374151;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-color-glow: rgba(245, 158, 11, 0.3);
       --accent-green: #10b981;
-      --accent-green-bg: #064e3b;
+      --accent-green-bg: rgba(16, 185, 129, 0.15);
       --accent-red: #ef4444;
     }
 
@@ -40,7 +41,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-color: var(--bg-color);
+      background: radial-gradient(circle at center, #1e293b 0%, #080c14 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -51,19 +52,20 @@
 
     .login-card {
       background: var(--card-bg);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 40px 32px;
+      border-radius: 20px;
+      padding: 44px 36px;
       width: 100%;
       max-width: 380px;
       text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
     }
 
     .login-brand-icon {
-      background: var(--primary-gold);
-      width: 52px;
-      height: 52px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -71,29 +73,31 @@
       font-size: 1.8em;
       color: #0d1117;
       font-weight: bold;
-      margin: 0 auto 16px auto;
+      margin: 0 auto 20px auto;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
     }
 
     .login-card h2 {
       margin: 0 0 8px 0;
       color: var(--primary-gold);
-      font-size: 1.6em;
+      font-size: 1.7em;
+      letter-spacing: -0.5px;
     }
 
     .login-card p {
       color: var(--text-muted);
       font-size: 0.9em;
-      margin-bottom: 28px;
-      line-height: 1.4;
+      margin-bottom: 32px;
+      line-height: 1.5;
     }
 
     .google-btn {
       width: 100%;
       background: #ffffff;
-      color: #1f2937;
+      color: #0f172a;
       border: none;
       padding: 12px 16px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-weight: 600;
       font-size: 0.95em;
       cursor: pointer;
@@ -101,11 +105,12 @@
       align-items: center;
       justify-content: center;
       gap: 12px;
-      transition: background 0.2s, transform 0.1s;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
-    .google-btn:hover { background: #f3f4f6; }
-    .google-btn:active { transform: scale(0.98); }
+    .google-btn:hover { background: #f1f5f9; transform: translateY(-1px); }
+    .google-btn:active { transform: translateY(0); }
 
     .google-icon {
       width: 20px;
@@ -120,13 +125,13 @@
     }
 
     .sidebar {
-      width: 230px;
+      width: 240px;
       background-color: var(--sidebar-bg);
       border-right: 1px solid var(--border-color);
       color: #fff;
       display: flex;
       flex-direction: column;
-      padding: 20px;
+      padding: 24px 16px;
       box-sizing: border-box;
       flex-shrink: 0;
     }
@@ -134,24 +139,26 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       font-size: 1.25em;
-      font-weight: bold;
+      font-weight: 700;
       color: var(--primary-gold);
-      margin-bottom: 25px;
+      margin-bottom: 32px;
+      padding-left: 8px;
     }
 
     .brand-icon {
-      background: var(--primary-gold);
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.1em;
       color: #0d1117;
       font-weight: bold;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
     }
 
     .nav-list {
@@ -160,33 +167,39 @@
       margin: 0;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
 
     .nav-item {
-      padding: 10px 14px;
-      border-radius: 8px;
+      padding: 12px 16px;
+      border-radius: 12px;
       color: var(--text-muted);
       text-decoration: none;
       font-weight: 500;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       cursor: pointer;
-      font-size: 0.9em;
-      transition: all 0.2s;
+      font-size: 0.92em;
+      transition: all 0.2s ease;
     }
 
-    .nav-item:hover, .nav-item.active {
-      background-color: var(--primary-gold);
-      color: #0b0f19;
-      font-weight: 600;
+    .nav-item:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #0f172a;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
     }
 
     .main-content {
       flex: 1;
       overflow-y: auto;
-      padding: 20px 28px;
+      padding: 24px 32px;
       box-sizing: border-box;
     }
 
@@ -194,19 +207,20 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       flex-wrap: wrap;
       gap: 12px;
     }
 
     .greeting h1 {
       margin: 0;
-      font-size: 1.6em;
+      font-size: 1.7em;
+      letter-spacing: -0.5px;
       color: var(--primary-gold);
     }
 
     .greeting p {
-      margin: 2px 0 0 0;
+      margin: 4px 0 0 0;
       color: var(--text-muted);
       font-size: 0.9em;
     }
@@ -217,9 +231,10 @@
       align-items: center;
       gap: 10px;
       background: var(--card-bg);
+      backdrop-filter: blur(10px);
       border: 1px solid var(--border-color);
-      padding: 5px 12px;
-      border-radius: 20px;
+      padding: 6px 14px 6px 6px;
+      border-radius: 30px;
     }
 
     .user-avatar-img {
@@ -240,81 +255,93 @@
     .stats-row {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 20px;
+      gap: 20px;
+      margin-bottom: 24px;
     }
 
     .stat-card {
       background: var(--card-bg);
+      backdrop-filter: blur(10px);
       border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 16px;
+      border-radius: 14px;
+      padding: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--border-color-glow);
+      transform: translateY(-2px);
     }
 
     .stat-card span {
-      font-size: 0.8em;
+      font-size: 0.82em;
       color: var(--text-muted);
       font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .stat-card h2 {
-      margin: 4px 0 0 0;
-      font-size: 1.4em;
+      margin: 6px 0 0 0;
+      font-size: 1.6em;
+      letter-spacing: -0.5px;
     }
 
     .rupee-icon {
-      font-size: 1.3em;
+      font-size: 1.4em;
       font-weight: bold;
       color: var(--primary-gold);
     }
 
     .section-card {
       background: var(--card-bg);
+      backdrop-filter: blur(10px);
       border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 18px;
-      margin-bottom: 20px;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
     }
 
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
     .section-header h3 {
       margin: 0;
-      font-size: 1.05em;
+      font-size: 1.1em;
       color: var(--primary-gold);
+      letter-spacing: -0.3px;
     }
 
     /* Calendar Grid */
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 6px;
+      gap: 8px;
       text-align: center;
     }
 
     .day-label {
-      font-weight: bold;
+      font-weight: 700;
       color: var(--primary-gold);
-      font-size: 0.85em;
-      padding-bottom: 6px;
+      font-size: 0.82em;
+      padding-bottom: 8px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
     .date-cell {
-      height: 52px;
-      padding: 5px 6px;
+      height: 56px;
+      padding: 6px 8px;
       background: var(--card-inner);
       border: 1px solid var(--border-color);
-      border-radius: 6px;
+      border-radius: 10px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
@@ -322,20 +349,21 @@
       font-weight: 600;
       font-size: 0.85em;
       box-sizing: border-box;
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+      transition: all 0.2s ease;
     }
 
     .date-cell:not(.empty):hover {
       border-color: var(--primary-gold);
-      background: #28354d !important;
+      background: #1e293b !important;
       transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     .date-cell.empty { background: transparent; border: none; cursor: default; }
 
     .date-cell.today {
       border: 2px solid var(--primary-gold) !important;
-      background: #3b2d11 !important;
+      background: rgba(245, 158, 11, 0.15) !important;
     }
 
     .date-cell.logged {
@@ -351,9 +379,9 @@
     }
 
     .cell-amount {
-      font-size: 0.7em;
+      font-size: 0.72em;
       color: #a7f3d0;
-      font-weight: bold;
+      font-weight: 700;
     }
 
     .tick-mark {
@@ -366,10 +394,10 @@
     .dashboard-grid {
       display: grid;
       grid-template-columns: 2fr 1fr;
-      gap: 16px;
+      gap: 20px;
     }
 
-    .progress-item { margin-bottom: 12px; }
+    .progress-item { margin-bottom: 14px; }
     .progress-info { display: flex; justify-content: space-between; font-size: 0.88em; margin-bottom: 6px; }
     .progress-bar-bg { background: var(--card-inner); height: 8px; border-radius: 4px; overflow: hidden; }
     .progress-bar-fill { height: 100%; border-radius: 4px; }
@@ -384,17 +412,17 @@
     .fullscreen-overlay {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(11, 15, 25, 0.98);
-      backdrop-filter: blur(10px);
+      background: rgba(8, 12, 20, 0.98);
+      backdrop-filter: blur(14px);
       z-index: 2000;
       display: flex;
       flex-direction: column;
-      padding: 30px;
+      padding: 32px;
       box-sizing: border-box;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s ease, transform 0.3s ease;
-      transform: scale(0.97);
+      transform: scale(0.98);
       overflow-y: auto;
     }
 
@@ -427,24 +455,24 @@
       color: var(--text-muted);
       border: 1px solid var(--border-color);
       padding: 10px 20px;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      font-size: 0.95em;
+      font-size: 0.92em;
       font-weight: 600;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       white-space: nowrap;
     }
 
     .summary-tab-btn.active {
-      background: var(--primary-gold);
-      color: #0b0f19;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #0f172a;
       border-color: var(--primary-gold);
     }
 
     .summary-hero-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 24px;
       margin-bottom: 24px;
       display: flex;
@@ -473,16 +501,16 @@
     .summary-cat-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 16px 20px;
+      border-radius: 12px;
+      padding: 18px 20px;
     }
 
     /* Standard Modals */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(3px);
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(6px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -493,46 +521,48 @@
 
     .modal-content {
       background: var(--card-bg);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--border-color);
-      padding: 20px;
-      border-radius: 10px;
+      padding: 24px;
+      border-radius: 16px;
       width: 100%;
       max-width: 420px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
       max-height: 85vh;
       overflow-y: auto;
     }
 
-    .field { margin-bottom: 12px; }
-    label { display: block; font-size: 0.8em; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
+    .field { margin-bottom: 14px; }
+    label { display: block; font-size: 0.82em; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
 
     input, select {
       width: 100%;
-      padding: 8px 10px;
+      padding: 10px 12px;
       background: var(--card-inner);
       border: 1px solid var(--border-color);
       color: #fff;
-      border-radius: 6px;
+      border-radius: 8px;
       box-sizing: border-box;
-      font-size: 0.9em;
+      font-size: 0.92em;
     }
 
     input:focus, select:focus { outline: none; border-color: var(--primary-gold); }
 
     .btn {
-      background: var(--primary-gold);
-      color: #0b0f19;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #0f172a;
       border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
+      padding: 10px 16px;
+      border-radius: 8px;
       font-weight: 700;
       cursor: pointer;
-      font-size: 0.85em;
-      transition: background 0.2s, transform 0.1s;
+      font-size: 0.88em;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
     }
 
-    .btn:hover { background: var(--primary-hover); }
-    .btn:active { transform: scale(0.98); }
+    .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
 
     /* MOBILE RESPONSIVE MEDIA QUERIES */
     @media (max-width: 768px) {
@@ -561,7 +591,7 @@
       .nav-list {
         flex-direction: row;
         overflow-x: auto;
-        gap: 10px;
+        gap: 8px;
         padding-bottom: 4px;
       }
 
@@ -591,7 +621,7 @@
       }
 
       .date-cell {
-        height: 44px;
+        height: 48px;
         padding: 4px;
         font-size: 0.78em;
       }
@@ -629,7 +659,7 @@
 
   <!-- Main Application Layout -->
   <div id="main-app" class="app-layout hidden">
-    <!-- Left Sidebar -->
+    <!-- Left Sidebar (Reordered Navigation) -->
     <div class="sidebar">
       <div class="brand">
         <div class="brand-icon">₹</div>
@@ -638,8 +668,8 @@
 
       <ul class="nav-list">
         <li class="nav-item active" id="nav-dashboard" onclick="showDashboardView()">📊 Dashboard</li>
-        <li class="nav-item" id="nav-income" onclick="openIncomeModal()">💵 Monthly Income</li>
         <li class="nav-item" id="nav-summary" onclick="openFullSummaryView()">📈 View Summary</li>
+        <li class="nav-item" id="nav-income" onclick="openIncomeModal()">💵 Monthly Income</li>
         <li class="nav-item" onclick="openLogoutModal()">🚪 Logout</li>
       </ul>
     </div>
@@ -659,6 +689,18 @@
             <span id="user-display-name" class="user-name-text">User</span>
           </div>
         </div>
+      </div>
+
+      <!-- Quick Onboarding / Getting Started Banner -->
+      <div id="onboarding-card" class="section-card" style="border-left: 4px solid var(--primary-gold);">
+        <div class="section-header" style="margin-bottom: 6px;">
+          <h3 style="margin: 0; font-size: 1.05em;">👋 Quick Start Guide</h3>
+          <button class="btn" style="padding: 2px 8px; font-size: 0.75em; background: #374151; color: #fff;" onclick="closeModal('onboarding-card')">Dismiss</button>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.88em; margin: 0; line-height: 1.6;">
+          <strong>1. Set Income:</strong> Click <strong>💵 Monthly Income</strong> in the left sidebar to add your budget for this month.<br>
+          <strong>2. Log Spending:</strong> Click any date on the <strong>Calendar Logger</strong> to enter daily category expenses.
+        </p>
       </div>
 
       <!-- Top Stats Cards (Total Expenses & Current Balance Only) -->
@@ -845,7 +887,6 @@
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
-    // Force explicit account selection prompt on login
     provider.setCustomParameters({
       prompt: 'select_account'
     });
