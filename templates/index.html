@@ -403,6 +403,26 @@
       pointer-events: auto;
     }
 
+    /* Summary Tabs Styling */
+    .summary-tab-btn {
+      background: var(--card-inner);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.88em;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .summary-tab-btn.active {
+      background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+      color: #0f172a !important;
+      border-color: var(--primary-gold) !important;
+    }
+
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -694,10 +714,10 @@
     </div>
 
     <div style="display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px;">
-      <button id="sum-tab-daily" class="btn" style="background: var(--card-inner); color: #fff;" onclick="setFullSummaryPeriod('daily')">Day Wise</button>
-      <button id="sum-tab-weekly" class="btn" style="background: var(--card-inner); color: #fff;" onclick="setFullSummaryPeriod('weekly')">Week Wise</button>
-      <button id="sum-tab-monthly" class="btn" onclick="setFullSummaryPeriod('monthly')">Month Wise</button>
-      <button id="sum-tab-yearly" class="btn" style="background: var(--card-inner); color: #fff;" onclick="setFullSummaryPeriod('yearly')">Year Wise</button>
+      <button id="sum-tab-daily" class="summary-tab-btn" onclick="setFullSummaryPeriod('daily')">Day Wise</button>
+      <button id="sum-tab-weekly" class="summary-tab-btn" onclick="setFullSummaryPeriod('weekly')">Week Wise</button>
+      <button id="sum-tab-monthly" class="summary-tab-btn active" onclick="setFullSummaryPeriod('monthly')">Month Wise</button>
+      <button id="sum-tab-yearly" class="summary-tab-btn" onclick="setFullSummaryPeriod('yearly')">Year Wise</button>
     </div>
 
     <div class="stat-card" style="margin-bottom: 16px;">
@@ -1191,9 +1211,16 @@
 
     window.setFullSummaryPeriod = function(period) {
       activeSummaryPeriod = period;
+
       ['daily', 'weekly', 'monthly', 'yearly'].forEach(p => {
         const tabBtn = document.getElementById(`sum-tab-${p}`);
-        if (tabBtn) tabBtn.style.background = p === period ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'var(--card-inner)';
+        if (tabBtn) {
+          if (p === period) {
+            tabBtn.classList.add('active');
+          } else {
+            tabBtn.classList.remove('active');
+          }
+        }
       });
 
       if (!window.fullSummaryData) return;
