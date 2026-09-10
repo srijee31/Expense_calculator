@@ -35,7 +35,6 @@
       width: 100%;
     }
 
-    /* Desktop Layout Defaults */
     body {
       display: flex;
       height: 100vh;
@@ -44,7 +43,7 @@
 
     .hidden { display: none !important; }
 
-    /* Dedicated Login View Screen */
+    /* Login Screen */
     .login-container {
       position: fixed;
       top: 0;
@@ -119,14 +118,8 @@
     }
 
     .google-btn:hover { background: #f1f5f9; transform: translateY(-1px); }
-    .google-btn:active { transform: translateY(0); }
 
-    .google-icon {
-      width: 20px;
-      height: 20px;
-    }
-
-    /* Main Workspace Layout */
+    /* Workspace Layout */
     .app-layout {
       display: flex;
       width: 100%;
@@ -147,12 +140,11 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
       font-size: 1.25em;
       font-weight: 700;
       color: var(--primary-gold);
       margin-bottom: 32px;
-      padding-left: 8px;
     }
 
     .brand-icon {
@@ -235,24 +227,24 @@
     .user-profile-card {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       background: var(--card-bg);
       backdrop-filter: blur(10px);
       border: 1px solid var(--border-color);
-      padding: 6px 14px 6px 6px;
+      padding: 6px 12px;
       border-radius: 30px;
     }
 
     .user-avatar-img {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       border: 2px solid var(--primary-gold);
       object-fit: cover;
     }
 
     .user-name-text {
-      font-size: 0.88em;
+      font-size: 0.85em;
       font-weight: 600;
       color: var(--text-main);
     }
@@ -273,12 +265,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: border-color 0.2s ease, transform 0.2s ease;
-    }
-
-    .stat-card:hover {
-      border-color: var(--border-color-glow);
-      transform: translateY(-2px);
     }
 
     .stat-card span {
@@ -286,13 +272,11 @@
       color: var(--text-muted);
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .stat-card h2 {
       margin: 6px 0 0 0;
       font-size: 1.6em;
-      letter-spacing: -0.5px;
     }
 
     .rupee-icon {
@@ -321,7 +305,6 @@
       margin: 0;
       font-size: 1.1em;
       color: var(--primary-gold);
-      letter-spacing: -0.3px;
     }
 
     .calendar-grid {
@@ -336,8 +319,6 @@
       color: var(--primary-gold);
       font-size: 0.82em;
       padding-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .date-cell {
@@ -352,14 +333,6 @@
       justify-content: space-between;
       font-weight: 600;
       font-size: 0.85em;
-      transition: all 0.2s ease;
-    }
-
-    .date-cell:not(.empty):hover {
-      border-color: var(--primary-gold);
-      background: #1e293b !important;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     .date-cell.empty { background: transparent; border: none; cursor: default; }
@@ -390,7 +363,6 @@
     .tick-mark {
       color: var(--accent-green);
       font-size: 0.9em;
-      line-height: 1;
       font-weight: bold;
     }
 
@@ -422,88 +394,13 @@
       padding: 32px;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      transform: scale(0.98);
+      transition: opacity 0.3s ease;
       overflow-y: auto;
     }
 
     .fullscreen-overlay.active {
       opacity: 1;
       pointer-events: auto;
-      transform: scale(1);
-    }
-
-    .fullscreen-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .summary-tabs-header {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 12px;
-      overflow-x: auto;
-    }
-
-    .summary-tab-btn {
-      background: var(--card-inner);
-      color: var(--text-muted);
-      border: 1px solid var(--border-color);
-      padding: 10px 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 0.92em;
-      font-weight: 600;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .summary-tab-btn.active {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #0f172a;
-      border-color: var(--primary-gold);
-    }
-
-    .summary-hero-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 24px;
-      margin-bottom: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .summary-hero-card h3 {
-      margin: 0;
-      color: var(--text-muted);
-      font-size: 0.95em;
-    }
-
-    .summary-hero-card h1 {
-      margin: 6px 0 0 0;
-      color: var(--primary-gold);
-      font-size: 2.2em;
-    }
-
-    .summary-list-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-    }
-
-    .summary-cat-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 18px 20px;
     }
 
     .modal-overlay {
@@ -544,8 +441,6 @@
       font-size: 0.92em;
     }
 
-    input:focus, select:focus { outline: none; border-color: var(--primary-gold); }
-
     .btn {
       background: linear-gradient(135deg, #f59e0b, #d97706);
       color: #0f172a;
@@ -555,298 +450,130 @@
       font-weight: 700;
       cursor: pointer;
       font-size: 0.88em;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
     }
 
-    .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
-    .btn:active { transform: translateY(0); }
-
     /* -------------------------------------------------- */
-    /* 1. TABLET & MOBILE RESPONSIVE MEDIA QUERY (< 900px) */
+    /* TARGETED MOBILE STYLES (< 900px)                  */
     /* -------------------------------------------------- */
-   /* MODERN MOBILE & SMALL SCREEN RESPONSIVE FIXES */
-@media screen and (max-width: 900px) {
-  html, body {
-    overflow-x: hidden !important; /* Block horizontal page shifting */
-    width: 100vw;
-  }
-
-  body {
-    flex-direction: column !important;
-    height: auto !important;
-    min-height: 100vh;
-  }
-
-  .app-layout {
-    flex-direction: column !important;
-    height: auto !important;
-    width: 100% !important;
-  }
-
-  /* Fixed Navigation Header on Mobile */
-  .sidebar {
-    width: 100% !important;
-    border-right: none !important;
-    border-bottom: 1px solid var(--border-color);
-    padding: 12px 16px !important;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background-color: var(--sidebar-bg);
-  }
-
-  .brand {
-    margin-bottom: 8px !important;
-  }
-
-  .nav-list {
-    flex-direction: row !important;
-    overflow-x: auto !important;
-    gap: 8px !important;
-    padding-bottom: 4px;
-    scrollbar-width: none; /* Hide scrollbar for Chrome/Safari */
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .nav-list::-webkit-scrollbar {
-    display: none;
-  }
-
-  .nav-item {
-    white-space: nowrap !important;
-    font-size: 0.82em !important;
-    padding: 8px 12px !important;
-    flex-shrink: 0;
-    border-radius: 8px !important;
-  }
-
-  /* Main Viewport Container Adjustments */
-  .main-content {
-    padding: 14px 12px !important;
-    overflow-y: visible !important;
-    width: 100% !important;
-    max-width: 100vw !important;
-    box-sizing: border-box !important;
-  }
-
-  .top-bar {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 12px !important;
-    margin-bottom: 16px !important;
-  }
-
-  /* Equalized Full-Width Dashboard Cards */
-  .stats-row,
-  .dashboard-grid {
-    grid-template-columns: 1fr !important; /* Stack vertically in single column */
-    gap: 12px !important;
-    width: 100% !important;
-  }
-
-  .stat-card,
-  .section-card {
-    padding: 14px 12px !important;
-    border-radius: 12px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Uniform Touch-Friendly Calendar Grid */
-  .calendar-grid {
-    gap: 4px !important;
-    width: 100% !important;
-  }
-
-  .day-label {
-    font-size: 0.72em !important;
-    padding-bottom: 4px !important;
-  }
-
-  .date-cell {
-    height: 42px !important;
-    padding: 3px 4px !important;
-    font-size: 0.75em !important;
-    border-radius: 6px !important;
-  }
-
-  .cell-footer {
-    justify-content: center !important;
-  }
-
-  .cell-amount {
-    font-size: 0.62em !important;
-  }
-
-  /* SVG Graph Responsiveness */
-  .chart-container {
-    height: 150px !important;
-    width: 100% !important;
-  }
-
-  /* Centered Modal Windows */
-  .modal-overlay {
-    padding: 12px !important;
-  }
-
-  .modal-content {
-    padding: 16px !important;
-    border-radius: 12px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    max-height: 90vh !important;
-  }
-  /* FULLSCREEN SUMMARY PAGE MOBILE FIXES */
-/* FIXED FULLSCREEN SUMMARY OVERLAY FOR MOBILE BROWSERS */
-#fullscreen-summary-page {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  min-height: 100vh !important;
-  height: auto !important; /* Allows the container to expand with content */
-  background: var(--bg-color) !important;
-  z-index: 2000 !important;
-  padding: 16px 16px 40px 16px !important; /* Bottom padding ensures last cards are visible */
-  overflow-y: auto !important; /* Enables full page vertical scroll */
-  -webkit-overflow-scrolling: touch;
-  box-sizing: border-box !important;
-}
-
-#fullscreen-summary-page .fullscreen-header {
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 12px !important;
-  margin-bottom: 16px !important;
-  width: 100% !important;
-}
-
-#fullscreen-summary-page .fullscreen-header button {
-  width: 100% !important; /* Converts Back button into a full-width tap target */
-  text-align: center !important;
-  padding: 12px !important;
-}
-
-#fullscreen-summary-page .summary-tabs-header {
-  display: flex !important;
-  width: 100% !important;
-  overflow-x: auto !important;
-  gap: 8px !important;
-  padding-bottom: 8px !important;
-  white-space: nowrap !important;
-  -webkit-overflow-scrolling: touch;
-}
-
-#fullscreen-summary-page .summary-tab-btn {
-  flex-shrink: 0 !important;
-  padding: 8px 14px !important;
-  font-size: 0.85em !important;
-}
-
-#fullscreen-summary-page .summary-hero-card {
-  width: 100% !important;
-  padding: 16px !important;
-  margin-bottom: 16px !important;
-  box-sizing: border-box !important;
-}
-
-#fullscreen-summary-page .summary-list-grid {
-  display: grid !important;
-  grid-template-columns: 1fr !important; /* Stacks category breakdown cards in a single column */
-  gap: 12px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* COMPACT CATEGORY BREAKDOWN & SUMMARY FOR MOBILE */
-.summary-list-grid {
-  grid-template-columns: repeat(2, 1fr) !important; /* Display in 2 compact columns on mobile */
-  gap: 8px !important;
-}
-
-.summary-cat-card,
-#category-progress-list .progress-item {
-  padding: 10px 12px !important;
-  margin-bottom: 8px !important;
-  border-radius: 8px !important;
-}
-
-/* Compact Progress Bars */
-.progress-info {
-  font-size: 0.78em !important;
-  margin-bottom: 4px !important;
-}
-
-.progress-bar-bg {
-  height: 5px !important; /* Thinner progress bars */
-  border-radius: 3px !important;
-}
-
-/* Reduced Category Heading & Hero Card Spacing */
-.summary-hero-card {
-  padding: 12px 14px !important;
-  margin-bottom: 12px !important;
-}
-
-.summary-hero-card h1 {
-  font-size: 1.4em !important;
-}
-
-#fullscreen-summary-page h3 {
-  font-size: 0.95em !important;
-  margin-bottom: 10px !important;
-}
-}
-
-    /* -------------------------------------------------- */
-    /* 2. SMALL MOBILE & WATCH MEDIA QUERY (< 480px)     */
-    /* -------------------------------------------------- */
-    @media screen and (max-width: 480px) {
-      .greeting h1 {
-        font-size: 1.35em !important;
+    @media screen and (max-width: 900px) {
+      body {
+        flex-direction: column !important;
+        overflow-y: auto !important;
+        height: auto !important;
+        min-height: 100vh;
       }
 
-      .section-card {
-        padding: 14px !important;
-        border-radius: 10px !important;
+      .app-layout {
+        flex-direction: column !important;
+        height: auto !important;
       }
 
-      .calendar-grid {
-        gap: 2px !important;
+      .sidebar {
+        width: 100% !important;
+        border-right: none !important;
+        border-bottom: 1px solid var(--border-color);
+        padding: 12px 16px !important;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background-color: var(--sidebar-bg);
       }
 
-      .day-label {
-        font-size: 0.72em !important;
+      .brand {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        margin-bottom: 12px !important;
       }
 
-      .date-cell {
-        height: 38px !important;
-        padding: 2px !important;
-        font-size: 0.72em !important;
+      .nav-list {
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        gap: 8px !important;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
       }
 
-      .cell-amount {
-        display: none !important; /* Hide tiny text on very small screens to fit cleanly */
+      .nav-item {
+        white-space: nowrap !important;
+        font-size: 0.82em !important;
+        padding: 8px 12px !important;
+        flex-shrink: 0;
       }
 
-      .tick-mark {
+      .main-content {
+        padding: 14px 12px !important;
+        overflow-y: visible !important;
+      }
+
+      .top-bar {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+        margin-bottom: 16px !important;
+      }
+
+      .greeting h1 { font-size: 1.4em !important; }
+
+      .stats-row, .dashboard-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      /* Compact Top Categories Matrix */
+      #category-progress-list {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+
+      #category-progress-list .progress-item {
+        margin-bottom: 0 !important;
+        background: var(--card-inner);
+        padding: 8px 10px !important;
+        border-radius: 8px !important;
+        border: 1px solid var(--border-color);
+      }
+
+      #category-progress-list .progress-info {
         font-size: 0.75em !important;
+        margin-bottom: 4px !important;
       }
 
-      .chart-container {
-        height: 140px !important;
+      #category-progress-list .progress-bar-bg {
+        height: 4px !important;
       }
 
-      .stat-card h2 {
-        font-size: 1.3em !important;
+      .calendar-grid { gap: 4px !important; }
+      .date-cell { height: 42px !important; padding: 3px 4px !important; font-size: 0.75em !important; }
+      .cell-amount { display: none !important; }
+
+      /* Fullscreen Summary Overlay Fix */
+      #fullscreen-summary-page {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        min-height: 100vh !important;
+        height: auto !important;
+        padding: 16px 16px 40px 16px !important;
+      }
+
+      .summary-list-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+
+      .summary-cat-card {
+        padding: 10px 12px !important;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Fullscreen Login View -->
+  <!-- Login Screen -->
   <div id="login-view" class="login-container">
     <div class="login-card">
       <div class="login-brand-icon">₹</div>
@@ -854,7 +581,7 @@
       <p>Log in to access and sync your personal expenses securely across devices.</p>
       
       <button class="google-btn" onclick="triggerLogin()">
-        <svg class="google-icon" viewBox="0 0 24 24">
+        <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
           <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
           <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
@@ -865,13 +592,19 @@
     </div>
   </div>
 
-  <!-- Main Application Layout -->
+  <!-- Main App Layout -->
   <div id="main-app" class="app-layout hidden">
-    <!-- Left Sidebar -->
     <div class="sidebar">
       <div class="brand">
-        <div class="brand-icon">₹</div>
-        <span>Expense Tracker</span>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="brand-icon">₹</div>
+          <span>Expense Tracker</span>
+        </div>
+        <!-- Profile Card inside top row for Mobile -->
+        <div id="user-profile-badge" class="user-profile-card hidden">
+          <img id="user-avatar" src="" alt="Profile" class="user-avatar-img">
+          <span id="user-display-name" class="user-name-text">User</span>
+        </div>
       </div>
 
       <ul class="nav-list">
@@ -882,36 +615,25 @@
       </ul>
     </div>
 
-    <!-- Main Content Area -->
     <div class="main-content">
       <div class="top-bar">
         <div class="greeting">
           <h1 id="welcome-heading">Good Morning 👋</h1>
           <p>Manage and track your daily money flow.</p>
         </div>
-
-        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-          <!-- Top Right Profile Card -->
-          <div id="user-profile-badge" class="user-profile-card hidden">
-            <img id="user-avatar" src="" alt="Profile Picture" class="user-avatar-img">
-            <span id="user-display-name" class="user-name-text">User</span>
-          </div>
-        </div>
       </div>
 
-      <!-- Quick Onboarding / Getting Started Banner -->
       <div id="onboarding-card" class="section-card" style="border-left: 4px solid var(--primary-gold);">
         <div class="section-header" style="margin-bottom: 6px;">
           <h3 style="margin: 0; font-size: 1.05em;">👋 Quick Start Guide</h3>
           <button class="btn" style="padding: 2px 8px; font-size: 0.75em; background: #374151; color: #fff;" onclick="closeModal('onboarding-card')">Dismiss</button>
         </div>
         <p style="color: var(--text-muted); font-size: 0.88em; margin: 0; line-height: 1.6;">
-          <strong>1. Set Income:</strong> Click <strong>💵 Monthly Income</strong> in the left sidebar to add your budget for this month.<br>
+          <strong>1. Set Income:</strong> Click <strong>💵 Monthly Income</strong> to set your budget.<br>
           <strong>2. Log Spending:</strong> Click any date on the <strong>Calendar Logger</strong> to enter daily category expenses.
         </p>
       </div>
 
-      <!-- Top Stats Cards (Total Expenses & Current Balance Only) -->
       <div class="stats-row">
         <div class="stat-card">
           <div>
@@ -929,7 +651,6 @@
         </div>
       </div>
 
-      <!-- Calendar Expense Logger -->
       <div class="section-card">
         <div class="section-header">
           <h3 id="month-year-title">Calendar Expense Logger</h3>
@@ -941,7 +662,6 @@
         <div class="calendar-grid" id="calendar-grid"></div>
       </div>
 
-      <!-- Daily Expense Graph & Categories -->
       <div class="dashboard-grid">
         <div class="section-card">
           <div class="section-header">
@@ -963,42 +683,42 @@
     </div>
   </div>
 
-  <!-- FULLSCREEN VIEW SUMMARY SCREEN -->
+  <!-- Fullscreen Summary Page -->
   <div id="fullscreen-summary-page" class="fullscreen-overlay">
-    <div class="fullscreen-header">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
       <div>
-        <h2 style="color: var(--primary-gold); margin: 0; font-size: 1.8em;">Full Analytics Summary</h2>
-        <p style="color: var(--text-muted); margin: 4px 0 0 0;">Comprehensive breakdown of your financial spending.</p>
+        <h2 style="color: var(--primary-gold); margin: 0; font-size: 1.6em;">Full Analytics Summary</h2>
+        <p style="color: var(--text-muted); margin: 4px 0 0 0; font-size: 0.88em;">Comprehensive breakdown of your financial spending.</p>
       </div>
-      <button class="btn" style="background: #374151; color: #fff; padding: 10px 18px;" onclick="showDashboardView()">⬅️ Back to Dashboard</button>
+      <button class="btn" style="background: #374151; color: #fff; padding: 8px 14px;" onclick="showDashboardView()">⬅️ Back to Dashboard</button>
     </div>
 
-    <div class="summary-tabs-header">
-      <button id="sum-tab-daily" class="summary-tab-btn" onclick="setFullSummaryPeriod('daily')">Day Wise</button>
-      <button id="sum-tab-weekly" class="summary-tab-btn" onclick="setFullSummaryPeriod('weekly')">Week Wise</button>
-      <button id="sum-tab-monthly" class="summary-tab-btn active" onclick="setFullSummaryPeriod('monthly')">Month Wise</button>
-      <button id="sum-tab-yearly" class="summary-tab-btn" onclick="setFullSummaryPeriod('yearly')">Year Wise</button>
+    <div style="display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px;">
+      <button id="sum-tab-daily" class="btn" style="background: var(--card-inner); color: #fff;" onclick="setFullSummaryPeriod('daily')">Day Wise</button>
+      <button id="sum-tab-weekly" class="btn" style="background: var(--card-inner); color: #fff;" onclick="setFullSummaryPeriod('weekly')">Week Wise</button>
+      <button id="sum-tab-monthly" class="btn" onclick="setFullSummaryPeriod('monthly')">Month Wise</button>
+      <button id="sum-tab-yearly" class="btn" style="background: var(--card-inner); color: #fff;" onclick="setFullSummaryPeriod('yearly')">Year Wise</button>
     </div>
 
-    <div class="summary-hero-card">
+    <div class="stat-card" style="margin-bottom: 16px;">
       <div>
-        <h3 id="summary-period-title">Total Monthly Expenses</h3>
-        <h1 id="summary-period-total">₹0.00</h1>
+        <span id="summary-period-title">Total Monthly Expenses</span>
+        <h1 id="summary-period-total" style="color: var(--primary-gold); margin: 4px 0 0 0; font-size: 1.8em;">₹0.00</h1>
       </div>
-      <div style="font-size: 2.5em;">📊</div>
+      <div style="font-size: 2em;">📊</div>
     </div>
 
-    <h3 style="color: var(--primary-gold); margin-bottom: 16px;">Category Wise Breakdown</h3>
+    <h3 style="color: var(--primary-gold); margin-bottom: 12px; font-size: 1em;">Category Wise Breakdown</h3>
     <div class="summary-list-grid" id="summary-categories-grid"></div>
   </div>
 
   <!-- Fullscreen Graph Zoom Modal -->
   <div id="fullscreen-graph-modal" class="fullscreen-overlay">
-    <div class="fullscreen-header">
-      <h2 style="color: var(--primary-gold); margin: 0;">Detailed Daily Expense Analysis</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h2 style="color: var(--primary-gold); margin: 0; font-size: 1.4em;">Detailed Daily Analysis</h2>
       <button class="btn" style="background: #374151; color: #fff;" onclick="toggleGraphZoom(false)">📉 Minimize</button>
     </div>
-    <div style="flex: 1; position: relative; width: 100%; min-height: 300px;" id="fullscreen-chart-container">
+    <div style="flex: 1; position: relative; width: 100%; min-height: 280px;" id="fullscreen-chart-container">
       <svg id="fullscreen-chart-svg" viewBox="0 0 1000 500" style="width: 100%; height: 100%; overflow: visible;"></svg>
     </div>
   </div>
@@ -1007,30 +727,19 @@
   <div id="income-modal" class="modal-overlay hidden">
     <div class="modal-content">
       <h3 style="margin-top:0; color: var(--primary-gold);">Set Monthly Income (₹)</h3>
-      
       <div class="field">
-        <label for="income-month-select">Select Month:</label>
+        <label>Select Month:</label>
         <select id="income-month-select" onchange="handleIncomeMonthChange()">
-          <option value="0">January</option>
-          <option value="1">February</option>
-          <option value="2">March</option>
-          <option value="3">April</option>
-          <option value="4">May</option>
-          <option value="5">June</option>
-          <option value="6">July</option>
-          <option value="7">August</option>
-          <option value="8">September</option>
-          <option value="9">October</option>
-          <option value="10">November</option>
-          <option value="11">December</option>
+          <option value="0">January</option><option value="1">February</option><option value="2">March</option>
+          <option value="3">April</option><option value="4">May</option><option value="5">June</option>
+          <option value="6">July</option><option value="7">August</option><option value="8">September</option>
+          <option value="9">October</option><option value="10">November</option><option value="11">December</option>
         </select>
       </div>
-
       <div class="field">
-        <label for="income-amount-input">Monthly Income Amount (₹):</label>
+        <label>Monthly Income Amount (₹):</label>
         <input type="number" id="income-amount-input" placeholder="e.g. 50000">
       </div>
-
       <div style="display: flex; gap: 8px; margin-top: 16px;">
         <button class="btn" style="flex:1;" onclick="saveMonthlyIncome()">Save Income</button>
         <button class="btn" style="background: #4b5563; color: #fff;" onclick="closeModal('income-modal')">Cancel</button>
@@ -1038,14 +747,11 @@
     </div>
   </div>
 
-  <!-- Logout Confirmation Modal -->
+  <!-- Logout Modal -->
   <div id="logout-modal" class="modal-overlay hidden">
     <div class="modal-content" style="text-align: center;">
       <h3 style="margin-top:0; color: var(--primary-gold);">Confirm Logout</h3>
-      <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 20px;">
-        Are you sure you want to sign out of your account? You will need to sign in again to access your synced expense data.
-      </p>
-
+      <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 20px;">Are you sure you want to sign out?</p>
       <div style="display: flex; gap: 12px; justify-content: center;">
         <button class="btn" style="background: var(--accent-red); color: #fff; flex: 1;" onclick="confirmLogout()">Yes, Logout</button>
         <button class="btn" style="background: #4b5563; color: #fff; flex: 1;" onclick="closeModal('logout-modal')">Cancel</button>
@@ -1057,7 +763,6 @@
   <div id="entry-modal" class="modal-overlay hidden">
     <div class="modal-content">
       <h3 style="margin-top:0; color: var(--primary-gold);">Log Expense (<span id="modal-date-display"></span>)</h3>
-      
       <div class="field"><label>Travel (₹):</label><input type="number" id="amt-Travel" placeholder="0"></div>
       <div class="field"><label>Food (₹):</label><input type="number" id="amt-Food" placeholder="0"></div>
       <div class="field"><label>Groceries (₹):</label><input type="number" id="amt-Groceries" placeholder="0"></div>
@@ -1065,7 +770,6 @@
       <div class="field"><label>Shopping (₹):</label><input type="number" id="amt-Shopping" placeholder="0"></div>
       <div class="field"><label>Bills (₹):</label><input type="number" id="amt-Bills" placeholder="0"></div>
       <div class="field"><label>Entertainment (₹):</label><input type="number" id="amt-Entertainment" placeholder="0"></div>
-
       <div style="display: flex; gap: 8px; margin-top: 12px;">
         <button class="btn" style="flex:1;" onclick="submitExpense()">Save Entries</button>
         <button class="btn" style="background: #4b5563; color: #fff;" onclick="closeModal('entry-modal')">Cancel</button>
@@ -1073,7 +777,7 @@
     </div>
   </div>
 
-  <!-- Firebase Integration Script -->
+  <!-- Firebase Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -1094,9 +798,7 @@
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
-    provider.setCustomParameters({
-      prompt: 'select_account'
-    });
+    provider.setCustomParameters({ prompt: 'select_account' });
 
     let currentUser = null;
     let currentDate = new Date();
@@ -1127,11 +829,7 @@
     });
 
     window.triggerLogin = async function() {
-      try {
-        await signInWithPopup(auth, provider);
-      } catch (error) {
-        console.error("Authentication Error:", error);
-      }
+      try { await signInWithPopup(auth, provider); } catch (error) { console.error("Auth Error:", error); }
     };
 
     function renderUserProfile(user) {
@@ -1139,29 +837,20 @@
       const avatarImg = document.getElementById('user-avatar');
       const nameSpan = document.getElementById('user-display-name');
 
-      if (user.photoURL) {
-        avatarImg.src = user.photoURL;
-      } else {
-        avatarImg.src = "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
-      }
-
+      avatarImg.src = user.photoURL || "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
       nameSpan.innerText = user.displayName || user.email || "User";
       profileBadge.classList.remove('hidden');
     }
 
     async function loadUserDataFromFirestore(uid) {
       try {
-        const userDocRef = doc(db, "users", uid);
-        const docSnap = await getDoc(userDocRef);
-
+        const docSnap = await getDoc(doc(db, "users", uid));
         if (docSnap.exists()) {
           const data = docSnap.data();
           localStorage.setItem('device_expenses', JSON.stringify(data.expenses || []));
           localStorage.setItem('monthly_incomes_map', JSON.stringify(data.incomes_map || {}));
         }
-      } catch (err) {
-        console.error("Firestore Load Error:", err);
-      }
+      } catch (err) { console.error("Load Error:", err); }
 
       renderCalendar();
       updateDashboardStats();
@@ -1169,66 +858,39 @@
 
     async function syncDataToFirestore() {
       if (!currentUser) return;
-      const expenses = getLocalExpenses();
-      const incomesMap = getIncomesMap();
-
       try {
         await setDoc(doc(db, "users", currentUser.uid), {
-          expenses: expenses,
-          incomes_map: incomesMap,
+          expenses: getLocalExpenses(),
+          incomes_map: getIncomesMap(),
           lastUpdated: new Date().toISOString()
         });
-      } catch (err) {
-        console.error("Firestore Sync Error:", err);
-      }
+      } catch (err) { console.error("Sync Error:", err); }
     }
 
     function updateTimeBasedGreeting(name) {
-      const currentHour = new Date().getHours();
-      let greetingPrefix = "Good Evening";
-
-      if (currentHour >= 5 && currentHour < 12) {
-        greetingPrefix = "Good Morning";
-      } else if (currentHour >= 12 && currentHour < 17) {
-        greetingPrefix = "Good Afternoon";
-      }
-
-      document.getElementById('welcome-heading').innerText = `${greetingPrefix}, ${name} 👋`;
+      const hour = new Date().getHours();
+      let prefix = hour >= 5 && hour < 12 ? "Good Morning" : hour >= 12 && hour < 17 ? "Good Afternoon" : "Good Evening";
+      document.getElementById('welcome-heading').innerText = `${prefix}, ${name} 👋`;
     }
 
-    function getLocalExpenses() {
-      return JSON.parse(localStorage.getItem('device_expenses')) || [];
-    }
-
-    function saveLocalExpenses(data) {
-      localStorage.setItem('device_expenses', JSON.stringify(data));
-    }
-
-    function getIncomesMap() {
-      return JSON.parse(localStorage.getItem('monthly_incomes_map')) || {};
-    }
+    function getLocalExpenses() { return JSON.parse(localStorage.getItem('device_expenses')) || []; }
+    function saveLocalExpenses(data) { localStorage.setItem('device_expenses', JSON.stringify(data)); }
+    function getIncomesMap() { return JSON.parse(localStorage.getItem('monthly_incomes_map')) || {}; }
 
     function getCurrentMonthIncome() {
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-      const key = `${year}-${String(month + 1).padStart(2, '0')}`;
-      const incomesMap = getIncomesMap();
-      return parseFloat(incomesMap[key]) || 0;
+      const key = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+      return parseFloat(getIncomesMap()[key]) || 0;
     }
 
     window.handleIncomeMonthChange = function() {
       const selectedMonth = parseInt(document.getElementById('income-month-select').value);
-      const year = currentDate.getFullYear();
-      const key = `${year}-${String(selectedMonth + 1).padStart(2, '0')}`;
-      const incomesMap = getIncomesMap();
-      
-      const savedVal = parseFloat(incomesMap[key]);
+      const key = `${currentDate.getFullYear()}-${String(selectedMonth + 1).padStart(2, '0')}`;
+      const savedVal = parseFloat(getIncomesMap()[key]);
       document.getElementById('income-amount-input').value = !isNaN(savedVal) && savedVal > 0 ? savedVal : '';
     };
 
     window.openIncomeModal = function() {
-      const monthSelect = document.getElementById('income-month-select');
-      monthSelect.value = currentDate.getMonth();
+      document.getElementById('income-month-select').value = currentDate.getMonth();
       handleIncomeMonthChange();
       document.getElementById('income-modal').classList.remove('hidden');
     };
@@ -1236,8 +898,7 @@
     window.saveMonthlyIncome = function() {
       const selectedMonth = parseInt(document.getElementById('income-month-select').value);
       const val = parseFloat(document.getElementById('income-amount-input').value) || 0;
-      const year = currentDate.getFullYear();
-      const key = `${year}-${String(selectedMonth + 1).padStart(2, '0')}`;
+      const key = `${currentDate.getFullYear()}-${String(selectedMonth + 1).padStart(2, '0')}`;
 
       let incomesMap = getIncomesMap();
       incomesMap[key] = val;
@@ -1265,8 +926,7 @@
 
       let dailySums = {};
       allExpenses.forEach(e => {
-        if (!dailySums[e.date]) dailySums[e.date] = 0;
-        dailySums[e.date] += e.amount;
+        dailySums[e.date] = (dailySums[e.date] || 0) + e.amount;
       });
 
       for (let i = 0; i < firstDayIndex; i++) grid.innerHTML += `<div class="date-cell empty"></div>`;
@@ -1283,11 +943,7 @@
         let cellHTML = `<span>${day}</span>`;
         if (hasEntry) {
           const displayAmount = totalAmount >= 1000 ? `₹${(totalAmount / 1000).toFixed(1)}k` : `₹${totalAmount}`;
-          cellHTML += `
-            <div class="cell-footer">
-              <span class="cell-amount">${displayAmount}</span>
-              <span class="tick-mark">✓</span>
-            </div>`;
+          cellHTML += `<div class="cell-footer"><span class="cell-amount">${displayAmount}</span><span class="tick-mark">✓</span></div>`;
         }
 
         cell.innerHTML = cellHTML;
@@ -1305,8 +961,7 @@
     function openEntry(dateStr) {
       selectedDateStr = dateStr;
       document.getElementById('modal-date-display').innerText = dateStr;
-      const allExpenses = getLocalExpenses();
-      const dateEntries = allExpenses.filter(e => e.date === dateStr);
+      const dateEntries = getLocalExpenses().filter(e => e.date === dateStr);
 
       categoryKeys.forEach(cat => {
         const found = dateEntries.find(e => e.category === cat);
@@ -1316,9 +971,7 @@
       document.getElementById('entry-modal').classList.remove('hidden');
     }
 
-    window.closeModal = function(id) {
-      document.getElementById(id).classList.add('hidden');
-    };
+    window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); };
 
     window.submitExpense = function() {
       let allExpenses = getLocalExpenses().filter(e => e.date !== selectedDateStr);
@@ -1345,21 +998,17 @@
 
       let total = 0;
       let categoryTotals = {};
-
       categoryKeys.forEach(c => categoryTotals[c] = 0);
 
       allExpenses.forEach(e => {
         const expDate = new Date(e.date);
         if (expDate.getFullYear() === year && expDate.getMonth() === month) {
           total += e.amount;
-          if (categoryTotals[e.category] !== undefined) {
-            categoryTotals[e.category] += e.amount;
-          }
+          if (categoryTotals[e.category] !== undefined) categoryTotals[e.category] += e.amount;
         }
       });
 
       const balance = currentMonthIncome - total;
-
       document.getElementById('total-expenses').innerText = `₹${total.toLocaleString('en-IN')}`;
       document.getElementById('total-balance').innerText = `₹${balance.toLocaleString('en-IN')}`;
       document.getElementById('total-balance').style.color = balance < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
@@ -1404,12 +1053,12 @@
       for (let day = 1; day <= totalDays; day++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         dailyTotals[day] = 0;
-        allExpenses.forEach(e => {
-          if (e.date === dateStr) dailyTotals[day] += e.amount;
-        });
+        allExpenses.forEach(e => { if (e.date === dateStr) dailyTotals[day] += e.amount; });
       }
 
-      const maxExpense = Math.max(...Object.values(dailyTotals), 1000);
+      const highestExpense = Math.max(...Object.values(dailyTotals));
+      const maxExpense = highestExpense > 0 ? Math.ceil(highestExpense / 100) * 100 : 1000;
+
       const paddingLeft = 55;
       const paddingBottom = 30;
       const width = viewBoxW - paddingLeft;
@@ -1436,9 +1085,7 @@
       }
 
       let pathD = `M ${points[0].x} ${points[0].y}`;
-      for (let i = 1; i < points.length; i++) {
-        pathD += ` L ${points[i].x} ${points[i].y}`;
-      }
+      for (let i = 1; i < points.length; i++) { pathD += ` L ${points[i].x} ${points[i].y}`; }
 
       const areaD = `${pathD} L ${points[points.length - 1].x} ${height + 10} L ${paddingLeft} ${height + 10} Z`;
       svg.innerHTML += `<path d="${areaD}" fill="rgba(245, 158, 11, 0.12)" />`;
@@ -1450,66 +1097,24 @@
         const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         dot.setAttribute("cx", p.x);
         dot.setAttribute("cy", p.y);
-        dot.setAttribute("r", p.amount > 0 ? "5" : "3");
+        dot.setAttribute("r", p.amount > 0 ? "4" : "2");
         dot.setAttribute("fill", p.amount > 0 ? "#10b981" : "#f59e0b");
 
         const hitArea = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         hitArea.setAttribute("cx", p.x);
         hitArea.setAttribute("cy", p.y);
-        hitArea.setAttribute("r", "16");
+        hitArea.setAttribute("r", "14");
         hitArea.setAttribute("fill", "transparent");
         hitArea.setAttribute("style", "cursor: pointer;");
 
-        const tooltipGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        tooltipGroup.setAttribute("style", "display: none; pointer-events: none;");
-
-        const labelText = `${p.dateStr} (₹${p.amount.toLocaleString('en-IN')})`;
-        const approxWidth = labelText.length * 6.5 + 16;
-        const ttX = Math.min(Math.max(p.x - approxWidth / 2, paddingLeft), viewBoxW - approxWidth - 10);
-        const ttY = Math.max(p.y - 30, 15);
-
-        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        rect.setAttribute("x", ttX);
-        rect.setAttribute("y", ttY - 14);
-        rect.setAttribute("width", approxWidth);
-        rect.setAttribute("height", "22");
-        rect.setAttribute("rx", "4");
-        rect.setAttribute("fill", "#111827");
-        rect.setAttribute("stroke", "#f59e0b");
-        rect.setAttribute("stroke-width", "1");
-
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("x", ttX + approxWidth / 2);
-        text.setAttribute("y", ttY + 1);
-        text.setAttribute("fill", "#ffffff");
-        text.setAttribute("font-size", "10");
-        text.setAttribute("font-weight", "600");
-        text.setAttribute("text-anchor", "middle");
-        text.textContent = labelText;
-
-        tooltipGroup.appendChild(rect);
-        tooltipGroup.appendChild(text);
-
-        hitArea.onmouseover = () => {
-          dot.setAttribute("r", "8");
-          tooltipGroup.setAttribute("style", "display: block; pointer-events: none;");
-        };
-
-        hitArea.onmouseout = () => {
-          dot.setAttribute("r", p.amount > 0 ? "5" : "3");
-          tooltipGroup.setAttribute("style", "display: none; pointer-events: none;");
-        };
-
-        hitArea.onclick = () => {
-          alert(`${p.dateStr}\nExpense: ₹${p.amount.toLocaleString('en-IN')}`);
-        };
+        hitArea.onclick = () => { alert(`${p.dateStr}\nExpense: ₹${p.amount.toLocaleString('en-IN')}`); };
 
         group.appendChild(dot);
         group.appendChild(hitArea);
-        group.appendChild(tooltipGroup);
         svg.appendChild(group);
 
-        if (p.day === 1 || p.day % 5 === 0 || p.day === totalDays) {
+        // Odd numbers only on X-Axis (1, 3, 5, 7, 9...)
+        if (p.day % 2 !== 0) {
           svg.innerHTML += `
             <text x="${p.x}" y="${height + 24}" fill="#9ca3af" font-size="10" text-anchor="middle">${p.day}</text>
           `;
@@ -1522,18 +1127,14 @@
       if (enable) {
         modal.classList.add('active');
         renderDailyExpenseChart('fullscreen-chart-svg', 1000, 500);
-      } else {
-        modal.classList.remove('active');
-      }
+      } else { modal.classList.remove('active'); }
     };
 
     window.openFullSummaryView = function() {
       document.getElementById('nav-dashboard').classList.remove('active');
       document.getElementById('nav-summary').classList.add('active');
       document.getElementById('fullscreen-summary-page').classList.add('active');
-      
-      activeSummaryPeriod = 'daily';
-      
+      activeSummaryPeriod = 'monthly';
       calculateAndRenderSummary();
     };
 
@@ -1545,7 +1146,6 @@
 
     function calculateAndRenderSummary() {
       const allExpenses = getLocalExpenses();
-      const todayStr = new Date().toISOString().split('T')[0];
       const todayDate = new Date();
       const startOfWeek = new Date(todayDate);
       startOfWeek.setDate(todayDate.getDate() - todayDate.getDay());
@@ -1567,21 +1167,18 @@
 
         if (!categoryKeys.includes(cat)) return;
 
-        if (item.date === todayStr) {
+        if (expDate.toDateString() === todayDate.toDateString()) {
           periodTotals.daily += amt;
           byPeriodCategories.daily[cat] += amt;
         }
-
         if (expDate >= startOfWeek) {
           periodTotals.weekly += amt;
           byPeriodCategories.weekly[cat] += amt;
         }
-
         if (expDate.getFullYear() === todayDate.getFullYear() && expDate.getMonth() === todayDate.getMonth()) {
           periodTotals.monthly += amt;
           byPeriodCategories.monthly[cat] += amt;
         }
-
         if (expDate.getFullYear() === todayDate.getFullYear()) {
           periodTotals.yearly += amt;
           byPeriodCategories.yearly[cat] += amt;
@@ -1594,31 +1191,18 @@
 
     window.setFullSummaryPeriod = function(period) {
       activeSummaryPeriod = period;
-
       ['daily', 'weekly', 'monthly', 'yearly'].forEach(p => {
         const tabBtn = document.getElementById(`sum-tab-${p}`);
-        if (tabBtn) {
-          if (p === period) tabBtn.classList.add('active');
-          else tabBtn.classList.remove('active');
-        }
+        if (tabBtn) tabBtn.style.background = p === period ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'var(--card-inner)';
       });
 
       if (!window.fullSummaryData) return;
 
-      const titles = {
-        daily: "Today's Total Spending",
-        weekly: "This Week's Total Spending",
-        monthly: "This Month's Total Spending",
-        yearly: "This Year's Total Spending"
-      };
-
       const totalAmt = window.fullSummaryData.periodTotals[period] || 0;
-      document.getElementById('summary-period-title').innerText = titles[period];
       document.getElementById('summary-period-total').innerText = `₹${totalAmt.toLocaleString('en-IN')}`;
 
       const grid = document.getElementById('summary-categories-grid');
       grid.innerHTML = '';
-
       const categoriesData = window.fullSummaryData.byPeriodCategories[period] || {};
 
       for (const cat of categoryKeys) {
@@ -1631,27 +1215,22 @@
               <span style="font-weight: 600;">${cat}</span>
               <strong style="color: var(--primary-gold);">₹${amt.toLocaleString('en-IN')}</strong>
             </div>
-            <div class="progress-bar-bg" style="margin-top: 8px;">
+            <div class="progress-bar-bg" style="margin-top: 6px;">
               <div class="progress-bar-fill" style="width: ${percentage}%; background-color: ${categoryColors[cat] || '#f59e0b'};"></div>
             </div>
-            <div style="font-size: 0.75em; color: var(--text-muted); margin-top: 6px; text-align: right;">${percentage}% of total</div>
           </div>
         `;
       }
     };
 
-    window.openLogoutModal = function() {
-      document.getElementById('logout-modal').classList.remove('hidden');
-    };
+    window.openLogoutModal = function() { document.getElementById('logout-modal').classList.remove('hidden'); };
 
     window.confirmLogout = function() {
       signOut(auth).then(() => {
         localStorage.clear();
         closeModal('logout-modal');
         location.reload();
-      }).catch((err) => {
-        console.error("Sign Out Error:", err);
-      });
+      }).catch(err => console.error("Sign Out Error:", err));
     };
   </script>
 </body>
