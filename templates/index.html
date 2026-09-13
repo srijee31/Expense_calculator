@@ -33,7 +33,7 @@
 
     html, body {
       margin: 0; padding: 0;
-      background: radial-gradient(circle at 80% -10%, #20230f 0, var(--bg-color) 38%, #050608 100%); color: var(--text-main);
+      background: radial-gradient(circle at 80% -10%, #171d28 0, var(--bg-color) 38%, #050608 100%); color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       min-height: 100vh; width: 100%;
     }
@@ -51,7 +51,7 @@
 
     .login-container {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: radial-gradient(circle at 20% 10%, #252713 0%, #080a0e 48%, #050608 100%);
+      background: radial-gradient(circle at 20% 10%, #18202b 0%, #080a0e 48%, #050608 100%);
       display: flex; align-items: center; justify-content: center; z-index: 3000; padding: 20px;
     }
 
@@ -107,8 +107,8 @@
 
     .nav-item:hover { background-color: rgba(246, 201, 69, 0.11); color: var(--text-main); }
     .nav-item.active {
-      background: linear-gradient(135deg, #ffe47a, #d79d18); color: #16120a; font-weight: 700;
-      box-shadow: 0 4px 14px rgba(246, 201, 69, 0.3);
+      background: rgba(246, 201, 69, 0.14); color: var(--primary-gold); font-weight: 700;
+      border: 1px solid rgba(246, 201, 69, 0.38); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
     }
 
     .main-content { flex: 1; overflow-y: auto; padding: 28px clamp(16px, 4vw, 48px); }
@@ -208,8 +208,8 @@
     }
 
     .summary-tab-btn.active {
-      background: linear-gradient(135deg, #ffe47a, #d79d18) !important;
-      color: #16120a !important; border-color: var(--primary-gold) !important;
+      background: rgba(246, 201, 69, 0.14) !important;
+      color: var(--primary-gold) !important; border-color: var(--primary-gold) !important;
     }
 
     .modal-overlay {
@@ -299,7 +299,8 @@
     <div class="login-card">
       <div class="login-brand-icon">₹</div>
       <h2>Expense Tracker</h2>
-      <p>Log in to access and sync your personal expenses securely across devices.</p>
+      <p id="auth-description">Log in to access and sync your personal expenses securely across devices.</p>
+      <div id="auth-error" class="hidden" role="alert" style="color: var(--accent-red); background: rgba(255,107,122,.10); border: 1px solid rgba(255,107,122,.25); border-radius: 10px; padding: 10px; margin: -12px 0 18px; font-size: .82em; line-height: 1.45;"></div>
       
       <button class="google-btn" onclick="triggerLogin()">
         <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24">
@@ -310,6 +311,7 @@
         </svg>
         Sign in with Google
       </button>
+      <button id="offline-guest-btn" class="text-btn hidden" type="button" onclick="enterOfflineMode()" style="width:100%; margin-top:12px;">Continue offline on this device</button>
     </div>
   </div>
 
@@ -524,6 +526,40 @@
       try { return [...new Set(JSON.parse(localStorage.getItem('expense_tracker_categories') || 'null') || defaultCategories)]; } catch (_) { return [...defaultCategories]; }
     }
     function saveCategories() { localStorage.setItem('expense_tracker_categories', JSON.stringify(categoryKeys)); }
+
+    let authReady = false;
+    let isOfflineGuest = false;
+    function showAuthError(message) {
+      const box = document.getElementById('auth-error');
+      if (!box) return;
+      box.innerText = message;
+      box.classList.remove('hidden');
+    }
+    function clearAuthError() {
+      const box = document.getElementById('auth-error');
+      if (box) { box.innerText = ''; box.classList.add('hidden'); }
+    }
+    function showLoginScreen(message = '') {
+      document.getElementById('login-view').classList.remove('hidden');
+      document.getElementById('main-app').classList.add('hidden');
+      document.querySelectorAll('.user-profile-card').forEach(card => card.classList.add('hidden'));
+      const offlineButton = document.getElementById('offline-guest-btn');
+      if (offlineButton) offlineButton.classList.toggle('hidden', navigator.onLine);
+      if (message) showAuthError(message); else clearAuthError();
+    }
+    function showAppScreen() {
+      document.getElementById('login-view').classList.add('hidden');
+      document.getElementById('main-app').classList.remove('hidden');
+      renderCalendar();
+      updateDashboardStats();
+      showTourIfNeeded();
+    }
+    window.enterOfflineMode = function() {
+      isOfflineGuest = true;
+      showAppScreen();
+      document.getElementById('welcome-heading').innerText = 'Offline mode';
+      document.querySelector('.greeting p').innerText = 'Saved on this device. Sign in when online to sync across devices.';
+    };
 
     function updateNetworkStatus() {
       const banner = document.getElementById('offline-banner');
@@ -886,15 +922,12 @@
       const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `expense-report-${new Date().toISOString().slice(0,10)}.csv`; link.click(); URL.revokeObjectURL(link.href);
     };
 
-    // Auto load app on start if previously logged in or used locally
+    // Start behind the login screen until Firebase confirms a real user.
     document.addEventListener('DOMContentLoaded', () => {
       categoryKeys = loadCategories();
-      document.getElementById('login-view').classList.add('hidden');
-      document.getElementById('main-app').classList.remove('hidden');
-      renderCalendar();
-      updateDashboardStats();
+      showLoginScreen();
       updateNetworkStatus();
-      showTourIfNeeded();
+      if (!navigator.onLine) showAuthError('You are offline. Continue locally, or reconnect to sign in and sync your account.');
     });
   </script>
 
@@ -925,7 +958,11 @@
         let currentUser = null;
 
         onAuthStateChanged(auth, async (user) => {
+          authReady = true;
           if (user) {
+            clearAuthError();
+            isOfflineGuest = false;
+            showAppScreen();
             const guestExpenses = getLocalExpenses();
             const guestIncome = getIncomesMap();
             currentUser = user;
@@ -956,12 +993,28 @@
                 saveIncomesMap(guestIncome);
                 window.syncDataToFirestore();
               }
-            } catch (err) {}
+            } catch (err) {
+              console.error('Unable to load account data', err);
+              showAuthError('Signed in, but your synced data could not be loaded. Your local entries are still available.');
+            }
+          } else {
+            currentUser = null;
+            if (navigator.onLine && !isOfflineGuest) showLoginScreen();
           }
         });
 
         window.triggerLogin = async function() {
-          try { await signInWithPopup(auth, provider); } catch (error) {}
+          clearAuthError();
+          try {
+            await signInWithPopup(auth, provider);
+          } catch (error) {
+            console.error('Google sign-in failed', error);
+            const code = error?.code || '';
+            if (code === 'auth/popup-blocked') showAuthError('Your browser blocked the Google sign-in window. Allow pop-ups and try again.');
+            else if (code === 'auth/unauthorized-domain') showAuthError('This website domain is not authorized in Firebase. Add the Render domain in Firebase Authentication settings.');
+            else if (code === 'auth/popup-closed-by-user') showAuthError('The Google sign-in window was closed before completing sign-in.');
+            else showAuthError('Google sign-in could not be completed. Please check your connection and try again.');
+          }
         };
 
         window.syncDataToFirestore = async function() {
@@ -984,7 +1037,13 @@
             location.reload();
           }).catch(() => {});
         };
-      } catch (e) {}
+      } catch (e) {
+        console.error('Firebase could not initialize', e);
+        authReady = true;
+        if (navigator.onLine && !isOfflineGuest) showLoginScreen('Google login could not load. Refresh the page and try again.');
+      }
+    } else if (navigator.onLine && !isOfflineGuest) {
+      showLoginScreen('Google login is unavailable in this browser.');
     }
   </script>
 </body>
