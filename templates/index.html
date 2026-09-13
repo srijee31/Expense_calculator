@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Expense Tracker</title>
+  
+  <!-- PWA Manifest & Theme Color -->
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <style>
     :root {
       --bg-color: #080c14;
@@ -35,6 +42,21 @@
 
     body { display: flex; height: 100vh; overflow: hidden; }
     .hidden { display: none !important; }
+
+    /* Offline Banner Indicator */
+    .offline-banner {
+      background: var(--accent-red);
+      color: #fff;
+      text-align: center;
+      padding: 6px 12px;
+      font-size: 0.82em;
+      font-weight: 600;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 4000;
+    }
 
     /* Login Screen */
     .login-container {
@@ -186,14 +208,11 @@
       background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color);
       padding: 24px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 12px 32px rgba(0,0,0,0.6);
       max-height: 85vh; overflow-y: auto;
-      /* Hide scrollbars while maintaining vertical scroll */
       scrollbar-width: none;
       -ms-overflow-style: none;
     }
 
-    .modal-content::-webkit-scrollbar {
-      display: none;
-    }
+    .modal-content::-webkit-scrollbar { display: none; }
 
     .field { margin-bottom: 14px; }
     label { display: block; font-size: 0.82em; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
@@ -204,7 +223,6 @@
       padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.88em;
     }
 
-    /* Target Mobile Styles (< 900px) */
     @media screen and (max-width: 900px) {
       body { flex-direction: column !important; overflow-y: auto !important; height: auto !important; min-height: 100vh; }
       .app-layout { flex-direction: column !important; height: auto !important; }
@@ -243,6 +261,11 @@
   </style>
 </head>
 <body>
+
+  <!-- Offline Status Banner -->
+  <div id="offline-banner" class="offline-banner hidden">
+    ⚡ Offline Mode: Expenses logged will sync automatically when back online.
+  </div>
 
   <!-- Login Screen -->
   <div id="login-view" class="login-container">
@@ -451,11 +474,34 @@
     </div>
   </div>
 
-  <!-- Firebase Script -->
+  <!-- PWA & Firebase Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // 1. Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/sw.js')
+          .then(reg => console.log('Service Worker Registered:', reg.scope))
+          .catch(err => console.error('Service Worker Error:', err));
+      });
+    }
+
+    // 2. Offline Status Listener
+    function updateNetworkStatus() {
+      const banner = document.getElementById('offline-banner');
+      if (!navigator.onLine) {
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+        syncDataToFirestore(); // Sync offline queue automatically when back online
+      }
+    }
+
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
 
     const firebaseConfig = {
       apiKey: "AIzaSyC5O_FuiZFL1GwHmGmrAS_nGAdliQ81DuQ",
@@ -496,10 +542,18 @@
         await loadUserDataFromFirestore(user.uid);
       } else {
         currentUser = null;
-        document.getElementById('main-app').classList.add('hidden');
-        document.getElementById('login-view').classList.remove('hidden');
-        document.querySelectorAll('.user-profile-card').forEach(card => card.classList.add('hidden'));
+        // Allow offline interaction using local storage if user was logged in previously
+        if (localStorage.getItem('device_expenses')) {
+          document.getElementById('login-view').classList.add('hidden');
+          document.getElementById('main-app').classList.remove('hidden');
+          renderCalendar();
+          updateDashboardStats();
+        } else {
+          document.getElementById('main-app').classList.add('hidden');
+          document.getElementById('login-view').classList.remove('hidden');
+        }
       }
+      updateNetworkStatus();
     });
 
     window.triggerLogin = async function() {
@@ -507,8 +561,8 @@
     };
 
     function renderUserProfile(user) {
-      const avatarSrc = user.photoURL || "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
-      const nameText = user.displayName || user.email || "User";
+      const avatarSrc = user?.photoURL || "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
+      const nameText = user?.displayName || user?.email || "User";
 
       document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarSrc);
       document.querySelectorAll('.user-display-name').forEach(span => span.innerText = nameText);
@@ -516,6 +570,8 @@
     }
 
     async function loadUserDataFromFirestore(uid) {
+      if (!navigator.onLine) return; // Load from localStorage if offline
+
       try {
         const docSnap = await getDoc(doc(db, "users", uid));
         if (docSnap.exists()) {
@@ -530,7 +586,7 @@
     }
 
     async function syncDataToFirestore() {
-      if (!currentUser) return;
+      if (!currentUser || !navigator.onLine) return;
       try {
         await setDoc(doc(db, "users", currentUser.uid), {
           expenses: getLocalExpenses(),
@@ -806,8 +862,6 @@
       document.getElementById('nav-dashboard').classList.remove('active');
       document.getElementById('nav-summary').classList.add('active');
       document.getElementById('fullscreen-summary-page').classList.add('active');
-      
-      /* Opens Day Wise by default */
       activeSummaryPeriod = 'daily';
       calculateAndRenderSummary();
     };
