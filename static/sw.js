@@ -458,49 +458,14 @@
     </div>
   </div>
 
-  <!-- PWA & Offline Safe Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
+  <!-- Global Application Logic (Works Online & Offline) -->
+  <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/sw.js').catch(err => console.log('SW Registration failed:', err));
+        navigator.serviceWorker.register('/static/sw.js').catch(() => {});
       });
     }
 
-    function updateNetworkStatus() {
-      const banner = document.getElementById('offline-banner');
-      if (!navigator.onLine) {
-        banner.classList.remove('hidden');
-      } else {
-        banner.classList.add('hidden');
-        syncDataToFirestore();
-      }
-    }
-
-    window.addEventListener('online', updateNetworkStatus);
-    window.addEventListener('offline', updateNetworkStatus);
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyC5O_FuiZFL1GwHmGmrAS_nGAdliQ81DuQ",
-      authDomain: "expense-calculator-c8b9d.firebaseapp.com",
-      projectId: "expense-calculator-c8b9d",
-      storageBucket: "expense-calculator-c8b9d.firebasestorage.app",
-      messagingSenderId: "433220001220",
-      appId: "1:433220001220:web:140682deef6a675f72d891",
-      measurementId: "G-NKRZWVSCBE"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
-
-    provider.setCustomParameters({ prompt: 'select_account' });
-
-    let currentUser = null;
     let currentDate = new Date();
     let selectedDateStr = "";
     let activeSummaryPeriod = 'daily';
@@ -511,74 +476,18 @@
     const categoryKeys = ['Travel', 'Food', 'Groceries', 'Investment', 'Shopping', 'Bills', 'Entertainment'];
     const categoryColors = { Food: '#f59e0b', Travel: '#3b82f6', Shopping: '#a855f7', Investment: '#10b981', Groceries: '#f97316', Bills: '#ef4444', Entertainment: '#06b6d4' };
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        document.getElementById('login-view').classList.add('hidden');
-        document.getElementById('main-app').classList.remove('hidden');
-
-        updateTimeBasedGreeting(user.displayName || "User");
-        renderUserProfile(user);
-        await loadUserDataFromFirestore(user.uid);
+    function updateNetworkStatus() {
+      const banner = document.getElementById('offline-banner');
+      if (!navigator.onLine) {
+        banner.classList.remove('hidden');
       } else {
-        currentUser = null;
-        if (localStorage.getItem('device_expenses')) {
-          document.getElementById('login-view').classList.add('hidden');
-          document.getElementById('main-app').classList.remove('hidden');
-          renderCalendar();
-          updateDashboardStats();
-        } else {
-          document.getElementById('main-app').classList.add('hidden');
-          document.getElementById('login-view').classList.remove('hidden');
-        }
+        banner.classList.add('hidden');
+        if (window.syncDataToFirestore) window.syncDataToFirestore();
       }
-      updateNetworkStatus();
-    });
-
-    window.triggerLogin = async function() {
-      try { await signInWithPopup(auth, provider); } catch (error) { console.error("Auth Error:", error); }
-    };
-
-    function renderUserProfile(user) {
-      const avatarSrc = user?.photoURL || "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
-      const nameText = user?.displayName || user?.email || "User";
-
-      document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarSrc);
-      document.querySelectorAll('.user-display-name').forEach(span => span.innerText = nameText);
-      document.querySelectorAll('.user-profile-card').forEach(card => card.classList.remove('hidden'));
     }
 
-    async function loadUserDataFromFirestore(uid) {
-      if (navigator.onLine) {
-        try {
-          const docSnap = await getDoc(doc(db, "users", uid));
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            localStorage.setItem('device_expenses', JSON.stringify(data.expenses || []));
-            localStorage.setItem('monthly_incomes_map', JSON.stringify(data.incomes_map || {}));
-          }
-        } catch (err) { console.warn("Firestore Load Offline Fallback:", err); }
-      }
-      renderCalendar();
-      updateDashboardStats();
-    }
-
-    async function syncDataToFirestore() {
-      if (!currentUser || !navigator.onLine) return;
-      try {
-        await setDoc(doc(db, "users", currentUser.uid), {
-          expenses: getLocalExpenses(),
-          incomes_map: getIncomesMap(),
-          lastUpdated: new Date().toISOString()
-        });
-      } catch (err) { console.warn("Firestore Sync Offline Fallback:", err); }
-    }
-
-    function updateTimeBasedGreeting(name) {
-      const hour = new Date().getHours();
-      let prefix = hour >= 5 && hour < 12 ? "Good Morning" : hour >= 12 && hour < 17 ? "Good Afternoon" : "Good Evening";
-      document.getElementById('welcome-heading').innerText = `${prefix}, ${name} 👋`;
-    }
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
 
     function getLocalExpenses() { return JSON.parse(localStorage.getItem('device_expenses')) || []; }
     function saveLocalExpenses(data) { localStorage.setItem('device_expenses', JSON.stringify(data)); }
@@ -613,7 +522,7 @@
 
       closeModal('income-modal');
       updateDashboardStats();
-      syncDataToFirestore();
+      if (window.syncDataToFirestore) window.syncDataToFirestore();
     };
 
     function renderCalendar() {
@@ -691,7 +600,7 @@
       });
 
       saveLocalExpenses(allExpenses);
-      syncDataToFirestore();
+      if (window.syncDataToFirestore) window.syncDataToFirestore();
       closeModal('entry-modal');
       renderCalendar();
       updateDashboardStats();
@@ -938,13 +847,93 @@
 
     window.openLogoutModal = function() { document.getElementById('logout-modal').classList.remove('hidden'); };
 
-    window.confirmLogout = function() {
-      signOut(auth).then(() => {
-        localStorage.clear();
-        closeModal('logout-modal');
-        location.reload();
-      }).catch(err => console.error("Sign Out Error:", err));
-    };
+    // Initial render on load
+    document.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('device_expenses')) {
+        document.getElementById('login-view').classList.add('hidden');
+        document.getElementById('main-app').classList.remove('hidden');
+      }
+      renderCalendar();
+      updateDashboardStats();
+      updateNetworkStatus();
+    });
+  </script>
+
+  <!-- Optional Online Firebase Sync Module -->
+  <script type="module">
+    try {
+      const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
+      const { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");
+      const { getFirestore, doc, setDoc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyC5O_FuiZFL1GwHmGmrAS_nGAdliQ81DuQ",
+        authDomain: "expense-calculator-c8b9d.firebaseapp.com",
+        projectId: "expense-calculator-c8b9d",
+        storageBucket: "expense-calculator-c8b9d.firebasestorage.app",
+        messagingSenderId: "433220001220",
+        appId: "1:433220001220:web:140682deef6a675f72d891",
+        measurementId: "G-NKRZWVSCBE"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+
+      let currentUser = null;
+
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          currentUser = user;
+          document.getElementById('login-view').classList.add('hidden');
+          document.getElementById('main-app').classList.remove('hidden');
+          
+          const avatarSrc = user?.photoURL || "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
+          const nameText = user?.displayName || user?.email || "User";
+          document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarSrc);
+          document.querySelectorAll('.user-display-name').forEach(span => span.innerText = nameText);
+          document.querySelectorAll('.user-profile-card').forEach(card => card.classList.remove('hidden'));
+
+          if (navigator.onLine) {
+            try {
+              const docSnap = await getDoc(doc(db, "users", user.uid));
+              if (docSnap.exists()) {
+                const data = docSnap.data();
+                localStorage.setItem('device_expenses', JSON.stringify(data.expenses || []));
+                localStorage.setItem('monthly_incomes_map', JSON.stringify(data.incomes_map || {}));
+                renderCalendar();
+                updateDashboardStats();
+              }
+            } catch (err) {}
+          }
+        }
+      });
+
+      window.triggerLogin = async function() {
+        try { await signInWithPopup(auth, provider); } catch (error) {}
+      };
+
+      window.syncDataToFirestore = async function() {
+        if (!currentUser || !navigator.onLine) return;
+        try {
+          await setDoc(doc(db, "users", currentUser.uid), {
+            expenses: getLocalExpenses(),
+            incomes_map: getIncomesMap(),
+            lastUpdated: new Date().toISOString()
+          });
+        } catch (err) {}
+      };
+
+      window.confirmLogout = function() {
+        signOut(auth).then(() => {
+          localStorage.clear();
+          closeModal('logout-modal');
+          location.reload();
+        }).catch(() => {});
+      };
+    } catch (e) {}
   </script>
 </body>
 </html>
