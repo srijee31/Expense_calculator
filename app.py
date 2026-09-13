@@ -1,10 +1,14 @@
-from flask import Flask, render_template
+from flask import Flask, jsonify, render_template
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.get('/')
 def home():
     return render_template('index.html')
+
+@app.get('/health')
+def health():
+    return jsonify(status='ok')
 
 if __name__ == '__main__':
     app.run(debug=True)
