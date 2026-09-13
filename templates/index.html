@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Expense Tracker</title>
   
-  <!-- PWA Manifest & Theme Color -->
   <link rel="manifest" href="/static/manifest.json">
   <meta name="theme-color" content="#0f172a">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -31,34 +30,21 @@
     * { box-sizing: border-box; }
 
     html, body {
-      margin: 0;
-      padding: 0;
-      background-color: var(--bg-color);
-      color: var(--text-main);
+      margin: 0; padding: 0;
+      background-color: var(--bg-color); color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      min-height: 100vh;
-      width: 100%;
+      min-height: 100vh; width: 100%;
     }
 
     body { display: flex; height: 100vh; overflow: hidden; }
     .hidden { display: none !important; }
 
-    /* Offline Banner Indicator */
     .offline-banner {
-      background: var(--accent-red);
-      color: #fff;
-      text-align: center;
-      padding: 6px 12px;
-      font-size: 0.82em;
-      font-weight: 600;
-      width: 100%;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 4000;
+      background: var(--accent-red); color: #fff; text-align: center;
+      padding: 6px 12px; font-size: 0.82em; font-weight: 600; width: 100%;
+      position: fixed; top: 0; left: 0; z-index: 4000;
     }
 
-    /* Login Screen */
     .login-container {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: radial-gradient(circle at center, #1e293b 0%, #080c14 100%);
@@ -88,7 +74,6 @@
 
     .google-btn:hover { background: #f1f5f9; transform: translateY(-1px); }
 
-    /* Workspace Layout */
     .app-layout { display: flex; width: 100%; height: 100%; }
 
     .sidebar {
@@ -208,8 +193,7 @@
       background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color);
       padding: 24px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 12px 32px rgba(0,0,0,0.6);
       max-height: 85vh; overflow-y: auto;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
+      scrollbar-width: none; -ms-overflow-style: none;
     }
 
     .modal-content::-webkit-scrollbar { display: none; }
@@ -262,9 +246,9 @@
 </head>
 <body>
 
-  <!-- Offline Status Banner -->
+  <!-- Offline Banner -->
   <div id="offline-banner" class="offline-banner hidden">
-    ⚡ Offline Mode: Expenses logged will sync automatically when back online.
+    ⚡ Offline Mode: Expenses are saved locally and will auto-sync when online.
   </div>
 
   <!-- Login Screen -->
@@ -474,53 +458,14 @@
     </div>
   </div>
 
-  <!-- PWA & Firebase Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    // 1. Service Worker Registration
+  <!-- Primary Application Script (Pure Vanilla JS - 100% Offline Compatible) -->
+  <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/sw.js')
-          .then(reg => console.log('Service Worker Registered:', reg.scope))
-          .catch(err => console.error('Service Worker Error:', err));
+        navigator.serviceWorker.register('/static/sw.js').catch(() => {});
       });
     }
 
-    // 2. Offline Status Listener
-    function updateNetworkStatus() {
-      const banner = document.getElementById('offline-banner');
-      if (!navigator.onLine) {
-        banner.classList.remove('hidden');
-      } else {
-        banner.classList.add('hidden');
-        syncDataToFirestore(); // Sync offline queue automatically when back online
-      }
-    }
-
-    window.addEventListener('online', updateNetworkStatus);
-    window.addEventListener('offline', updateNetworkStatus);
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyC5O_FuiZFL1GwHmGmrAS_nGAdliQ81DuQ",
-      authDomain: "expense-calculator-c8b9d.firebaseapp.com",
-      projectId: "expense-calculator-c8b9d",
-      storageBucket: "expense-calculator-c8b9d.firebasestorage.app",
-      messagingSenderId: "433220001220",
-      appId: "1:433220001220:web:140682deef6a675f72d891",
-      measurementId: "G-NKRZWVSCBE"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
-
-    provider.setCustomParameters({ prompt: 'select_account' });
-
-    let currentUser = null;
     let currentDate = new Date();
     let selectedDateStr = "";
     let activeSummaryPeriod = 'daily';
@@ -531,76 +476,18 @@
     const categoryKeys = ['Travel', 'Food', 'Groceries', 'Investment', 'Shopping', 'Bills', 'Entertainment'];
     const categoryColors = { Food: '#f59e0b', Travel: '#3b82f6', Shopping: '#a855f7', Investment: '#10b981', Groceries: '#f97316', Bills: '#ef4444', Entertainment: '#06b6d4' };
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        document.getElementById('login-view').classList.add('hidden');
-        document.getElementById('main-app').classList.remove('hidden');
-
-        updateTimeBasedGreeting(user.displayName || "User");
-        renderUserProfile(user);
-        await loadUserDataFromFirestore(user.uid);
+    function updateNetworkStatus() {
+      const banner = document.getElementById('offline-banner');
+      if (!navigator.onLine) {
+        banner.classList.remove('hidden');
       } else {
-        currentUser = null;
-        // Allow offline interaction using local storage if user was logged in previously
-        if (localStorage.getItem('device_expenses')) {
-          document.getElementById('login-view').classList.add('hidden');
-          document.getElementById('main-app').classList.remove('hidden');
-          renderCalendar();
-          updateDashboardStats();
-        } else {
-          document.getElementById('main-app').classList.add('hidden');
-          document.getElementById('login-view').classList.remove('hidden');
-        }
+        banner.classList.add('hidden');
+        if (window.syncDataToFirestore) window.syncDataToFirestore();
       }
-      updateNetworkStatus();
-    });
-
-    window.triggerLogin = async function() {
-      try { await signInWithPopup(auth, provider); } catch (error) { console.error("Auth Error:", error); }
-    };
-
-    function renderUserProfile(user) {
-      const avatarSrc = user?.photoURL || "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
-      const nameText = user?.displayName || user?.email || "User";
-
-      document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarSrc);
-      document.querySelectorAll('.user-display-name').forEach(span => span.innerText = nameText);
-      document.querySelectorAll('.user-profile-card').forEach(card => card.classList.remove('hidden'));
     }
 
-    async function loadUserDataFromFirestore(uid) {
-      if (!navigator.onLine) return; // Load from localStorage if offline
-
-      try {
-        const docSnap = await getDoc(doc(db, "users", uid));
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          localStorage.setItem('device_expenses', JSON.stringify(data.expenses || []));
-          localStorage.setItem('monthly_incomes_map', JSON.stringify(data.incomes_map || {}));
-        }
-      } catch (err) { console.error("Load Error:", err); }
-
-      renderCalendar();
-      updateDashboardStats();
-    }
-
-    async function syncDataToFirestore() {
-      if (!currentUser || !navigator.onLine) return;
-      try {
-        await setDoc(doc(db, "users", currentUser.uid), {
-          expenses: getLocalExpenses(),
-          incomes_map: getIncomesMap(),
-          lastUpdated: new Date().toISOString()
-        });
-      } catch (err) { console.error("Sync Error:", err); }
-    }
-
-    function updateTimeBasedGreeting(name) {
-      const hour = new Date().getHours();
-      let prefix = hour >= 5 && hour < 12 ? "Good Morning" : hour >= 12 && hour < 17 ? "Good Afternoon" : "Good Evening";
-      document.getElementById('welcome-heading').innerText = `${prefix}, ${name} 👋`;
-    }
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
 
     function getLocalExpenses() { return JSON.parse(localStorage.getItem('device_expenses')) || []; }
     function saveLocalExpenses(data) { localStorage.setItem('device_expenses', JSON.stringify(data)); }
@@ -635,7 +522,7 @@
 
       closeModal('income-modal');
       updateDashboardStats();
-      syncDataToFirestore();
+      if (window.syncDataToFirestore) window.syncDataToFirestore();
     };
 
     function renderCalendar() {
@@ -687,7 +574,7 @@
       updateDashboardStats();
     };
 
-    function openEntry(dateStr) {
+    window.openEntry = function(dateStr) {
       selectedDateStr = dateStr;
       document.getElementById('modal-date-display').innerText = dateStr;
       const dateEntries = getLocalExpenses().filter(e => e.date === dateStr);
@@ -698,7 +585,7 @@
       });
 
       document.getElementById('entry-modal').classList.remove('hidden');
-    }
+    };
 
     window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); };
 
@@ -713,7 +600,7 @@
       });
 
       saveLocalExpenses(allExpenses);
-      syncDataToFirestore();
+      if (window.syncDataToFirestore) window.syncDataToFirestore();
       closeModal('entry-modal');
       renderCalendar();
       updateDashboardStats();
@@ -961,12 +848,93 @@
     window.openLogoutModal = function() { document.getElementById('logout-modal').classList.remove('hidden'); };
 
     window.confirmLogout = function() {
-      signOut(auth).then(() => {
-        localStorage.clear();
-        closeModal('logout-modal');
-        location.reload();
-      }).catch(err => console.error("Sign Out Error:", err));
+      localStorage.clear();
+      closeModal('logout-modal');
+      location.reload();
     };
+
+    // Auto load app on start if previously logged in or used locally
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('login-view').classList.add('hidden');
+      document.getElementById('main-app').classList.remove('hidden');
+      renderCalendar();
+      updateDashboardStats();
+      updateNetworkStatus();
+    });
+  </script>
+
+  <!-- Online Firebase Sync Script (Only loads when network connection is available) -->
+  <script type="module">
+    if (navigator.onLine) {
+      try {
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js");
+        const { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js");
+        const { getFirestore, doc, setDoc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyC5O_FuiZFL1GwHmGmrAS_nGAdliQ81DuQ",
+          authDomain: "expense-calculator-c8b9d.firebaseapp.com",
+          projectId: "expense-calculator-c8b9d",
+          storageBucket: "expense-calculator-c8b9d.firebasestorage.app",
+          messagingSenderId: "433220001220",
+          appId: "1:433220001220:web:140682deef6a675f72d891",
+          measurementId: "G-NKRZWVSCBE"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+
+        let currentUser = null;
+
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            currentUser = user;
+            const avatarSrc = user?.photoURL || "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
+            const nameText = user?.displayName || user?.email || "User";
+            document.querySelectorAll('.user-avatar').forEach(img => img.src = avatarSrc);
+            document.querySelectorAll('.user-display-name').forEach(span => span.innerText = nameText);
+            document.querySelectorAll('.user-profile-card').forEach(card => card.classList.remove('hidden'));
+
+            try {
+              const docSnap = await getDoc(doc(db, "users", user.uid));
+              if (docSnap.exists()) {
+                const data = docSnap.data();
+                localStorage.setItem('device_expenses', JSON.stringify(data.expenses || []));
+                localStorage.setItem('monthly_incomes_map', JSON.stringify(data.incomes_map || {}));
+                renderCalendar();
+                updateDashboardStats();
+              }
+            } catch (err) {}
+          }
+        });
+
+        window.triggerLogin = async function() {
+          try { await signInWithPopup(auth, provider); } catch (error) {}
+        };
+
+        window.syncDataToFirestore = async function() {
+          if (!currentUser || !navigator.onLine) return;
+          try {
+            await setDoc(doc(db, "users", currentUser.uid), {
+              expenses: getLocalExpenses(),
+              incomes_map: getIncomesMap(),
+              lastUpdated: new Date().toISOString()
+            });
+          } catch (err) {}
+        };
+
+        window.confirmLogout = function() {
+          signOut(auth).then(() => {
+            localStorage.clear();
+            closeModal('logout-modal');
+            location.reload();
+          }).catch(() => {});
+        };
+      } catch (e) {}
+    }
   </script>
 </body>
 </html>
