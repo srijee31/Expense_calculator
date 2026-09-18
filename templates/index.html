@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Expense Tracker</title>
   
   <link rel="manifest" href="/static/manifest.json">
@@ -45,8 +45,8 @@
 
     .offline-banner {
       background: var(--accent-red); color: #fff; text-align: center;
-      padding: 6px 12px; font-size: 0.82em; font-weight: 600; width: 100%;
-      position: fixed; top: 0; left: 0; z-index: 4000;
+      padding: 8px 12px; font-size: 0.85em; font-weight: 600; width: 100%;
+      position: relative; z-index: 4000; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
 
     .login-container {
@@ -137,7 +137,7 @@
 
     .section-card {
       background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color);
-      border-radius: 14px; padding: 20px; margin-bottom: 24px;
+        border-radius: 14px; padding: 20px; margin-bottom: 24px; scroll-margin-top: 110px;
     }
 
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
@@ -221,7 +221,7 @@
     .modal-content {
       background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--border-color);
       padding: 24px; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 12px 32px rgba(0,0,0,0.6);
-      max-height: 85vh; overflow-y: auto;
+      max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;
       scrollbar-width: none; -ms-overflow-style: none;
     }
 
@@ -236,21 +236,32 @@
       padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.88em;
     }
 
+    body.modal-open { overflow: hidden !important; }
+
     @media screen and (max-width: 900px) {
       body { flex-direction: column !important; overflow-y: auto !important; height: auto !important; min-height: 100vh; }
       .app-layout { flex-direction: column !important; height: auto !important; }
+
+      input, select, button { font-size: 16px !important; } /* Prevents iOS Safari auto-zoom on focus */
 
       .sidebar {
         width: 100% !important; border-right: none !important; border-bottom: 1px solid var(--border-color);
         padding: 12px 16px !important; position: sticky; top: 0; z-index: 1000; background-color: var(--sidebar-bg);
       }
 
-      .brand { display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; margin-bottom: 12px !important; }
+      .brand { display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; margin-bottom: 10px !important; }
       .sidebar .brand #user-profile-badge { display: flex !important; }
       .top-bar #top-bar-profile { display: none !important; }
 
-      .nav-list { flex-direction: row !important; overflow-x: auto !important; gap: 8px !important; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
-      .nav-item { white-space: nowrap !important; font-size: 0.82em !important; padding: 8px 12px !important; flex-shrink: 0; }
+      .nav-list {
+        flex-direction: row !important; overflow-x: auto !important; gap: 8px !important;
+        padding: 4px 2px 8px 2px !important; -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory; scrollbar-width: thin;
+      }
+      .nav-item {
+        white-space: nowrap !important; font-size: 0.88em !important; padding: 10px 14px !important;
+        flex-shrink: 0; min-height: 44px; display: flex; align-items: center; scroll-snap-align: start;
+      }
 
       .main-content { padding: 14px 12px !important; overflow-y: visible !important; }
       .top-bar { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; margin-bottom: 16px !important; }
@@ -258,18 +269,36 @@
 
       .stats-row, .dashboard-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
 
-      #category-progress-list { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
-      #category-progress-list .progress-item { margin-bottom: 0 !important; background: var(--card-inner); padding: 8px 10px !important; border-radius: 8px !important; border: 1px solid var(--border-color); }
-      #category-progress-list .progress-info { font-size: 0.75em !important; margin-bottom: 4px !important; }
-      #category-progress-list .progress-bar-bg { height: 4px !important; }
+      #category-progress-list { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important; gap: 8px !important; }
+      #category-progress-list .progress-item { margin-bottom: 0 !important; background: var(--card-inner); padding: 10px 12px !important; border-radius: 10px !important; border: 1px solid var(--border-color); }
+      #category-progress-list .progress-info { font-size: 0.8em !important; margin-bottom: 6px !important; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
+      #category-progress-list .progress-bar-bg { height: 6px !important; }
 
       .calendar-grid { gap: 4px !important; }
-      .date-cell { height: 42px !important; padding: 3px 4px !important; font-size: 0.75em !important; }
+      .date-cell { height: 46px !important; min-height: 44px !important; padding: 4px !important; font-size: 0.8em !important; }
       .cell-amount { display: none !important; }
 
-      #fullscreen-summary-page { position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; min-height: 100vh !important; height: auto !important; padding: 16px 16px 40px 16px !important; }
-      .summary-list-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+      .month-nav-btn { min-width: 44px !important; min-height: 44px !important; padding: 8px 16px !important; display: inline-flex; align-items: center; justify-content: center; }
+
+      #fullscreen-summary-page {
+        position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important;
+        padding: 16px 16px 40px 16px !important; z-index: 3000 !important;
+      }
+      .summary-list-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important; gap: 8px !important; }
       .summary-cat-card { padding: 10px 12px !important; }
+
+      #fullscreen-graph-modal { padding: 16px !important; z-index: 3500 !important; }
+      .bar-value { font-size: 8px !important; }
+
+      .tour-card { padding: 22px 18px !important; }
+      .tour-visual { width: 58px !important; height: 58px !important; font-size: 1.8rem !important; margin-bottom: 16px !important; }
+      .modal-content { padding: 20px 16px !important; max-height: 90vh !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; }
+      .custom-category-row button { min-height: 44px !important; }
+    }
+
+    @media screen and (max-width: 480px) {
+      #category-progress-list { grid-template-columns: 1fr !important; }
+      .summary-list-grid { grid-template-columns: 1fr !important; }
     }
   </style>
 </head>
@@ -382,8 +411,8 @@
         <div class="section-header">
           <h3 id="month-year-title">Calendar Expense Logger</h3>
           <div>
-            <button class="btn" style="padding: 2px 8px;" onclick="changeMonth(-1)">&lt;</button>
-            <button class="btn" style="padding: 2px 8px;" onclick="changeMonth(1)">&gt;</button>
+          <button class="btn month-nav-btn" aria-label="Previous Month" onclick="changeMonth(-1)">&lt;</button>
+          <button class="btn month-nav-btn" aria-label="Next Month" onclick="changeMonth(1)">&gt;</button>
           </div>
         </div>
         <div class="calendar-grid" id="calendar-grid"></div>
@@ -488,16 +517,18 @@
 
   <!-- Entry Modal -->
   <div id="entry-modal" class="modal-overlay hidden">
-    <div class="modal-content">
-      <h3 style="margin-top:0; color: var(--primary-gold);">Log Expense (<span id="modal-date-display"></span>)</h3>
-      <div id="expense-category-fields"></div>
-      <div class="custom-category-row">
-        <div class="field"><label for="new-category-input">Add your own category</label><input type="text" id="new-category-input" maxlength="24" placeholder="e.g. Fitness"></div>
-        <button class="btn" type="button" style="margin-bottom:14px; padding:10px 12px;" onclick="addCustomCategory()">+ Add</button>
+    <div class="modal-content" style="display: flex !important; flex-direction: column !important; max-height: 85vh !important; overflow: hidden !important;">
+      <h3 style="margin-top:0; color: var(--primary-gold); flex-shrink: 0;">Log Expense (<span id="modal-date-display"></span>)</h3>
+      <div style="flex: 1 1 auto !important; min-height: 0 !important; overflow-y: auto !important; padding-right: 4px; margin-bottom: 12px;">
+        <div id="expense-category-fields"></div>
+        <div class="custom-category-row">
+          <div class="field"><label for="new-category-input">Add your own category</label><input type="text" id="new-category-input" maxlength="24" placeholder="e.g. Fitness"></div>
+          <button class="btn" type="button" style="margin-bottom:14px; padding:10px 12px;" onclick="addCustomCategory()">+ Add</button>
+        </div>
       </div>
-      <div style="display: flex; gap: 8px; margin-top: 12px;">
-        <button class="btn" style="flex:1;" onclick="submitExpense()">Save Entries</button>
-        <button class="btn" style="background: #4b5563; color: #fff;" onclick="closeModal('entry-modal')">Cancel</button>
+      <div style="display: flex; gap: 8px; flex-shrink: 0; border-top: 1px solid var(--border-color); padding-top: 12px; position: relative; z-index: 10;">
+        <button class="btn" style="flex:1; min-height: 44px;" onclick="submitExpense()">Save Entries</button>
+        <button class="btn" style="background: #4b5563; color: #fff; min-height: 44px;" onclick="closeModal('entry-modal')">Cancel</button>
       </div>
     </div>
   </div>
@@ -669,10 +700,16 @@
       const dateEntries = getLocalExpenses().filter(e => e.date === dateStr);
       renderExpenseFields(dateEntries);
 
+      document.body.classList.add('modal-open');
       document.getElementById('entry-modal').classList.remove('hidden');
     };
 
-    window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); };
+    window.closeModal = function(id) {
+      document.getElementById(id).classList.add('hidden');
+      if (!document.querySelector('.modal-overlay:not(.hidden)') && !document.querySelector('.fullscreen-overlay.active')) {
+        document.body.classList.remove('modal-open');
+      }
+    };
 
     function renderExpenseFields(dateEntries = []) {
       const container = document.getElementById('expense-category-fields');
@@ -790,6 +827,7 @@
       document.getElementById('nav-dashboard').classList.remove('active');
       document.getElementById('nav-summary').classList.add('active');
       document.getElementById('fullscreen-summary-page').classList.add('active');
+      document.body.classList.add('modal-open');
       activeSummaryPeriod = 'daily';
       calculateAndRenderSummary();
     };
@@ -798,6 +836,7 @@
       document.getElementById('nav-summary').classList.remove('active');
       document.getElementById('nav-dashboard').classList.add('active');
       document.getElementById('fullscreen-summary-page').classList.remove('active');
+      document.body.classList.remove('modal-open');
     };
 
     function calculateAndRenderSummary() {
